@@ -28,6 +28,8 @@ python3 -m http.server 8000
 wrangler pages deploy . --project-name=personal-site --branch=main
 ```
 
+> 现生产环境：<https://hogrush.pages.dev>（项目名 `hogrush`）。
+
 ## ⚠️ 待替换的占位内容
 
 上线前请把以下内容替换为真实信息（当前均为占位）：
