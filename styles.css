@@ -157,12 +157,6 @@ html.dark .skip-link { background: var(--color-accent); color: var(--color-accen
   text-decoration: none;
   color: var(--color-text);
 }
-.brand-mark {
-  width: 22px;
-  height: 22px;
-  color: var(--color-accent);
-  flex: none;
-}
 .brand-name {
   font-family: var(--font-serif);
   font-style: italic;
@@ -284,11 +278,11 @@ html.dark .theme-toggle .icon-moon { display: none; }
   margin: 0 auto;
   text-align: center;
 }
-.hero-mark {
-  width: 44px;
-  height: 44px;
+.hero-logo {
+  display: block;
+  width: 96px;
+  height: auto;
   margin: 0 auto 24px;
-  color: var(--color-accent);
 }
 .hero-title {
   font-family: var(--font-serif);
@@ -623,7 +617,7 @@ html.dark .theme-toggle .icon-moon { display: none; }
 
 @media (max-width: 480px) {
   .hero { padding: 48px 16px 64px; }
-  .hero-mark { width: 36px; height: 36px; margin-bottom: 20px; }
+  .hero-logo { width: 64px; margin-bottom: 20px; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; max-width: 280px; }
   .section { padding: 56px 16px; }
