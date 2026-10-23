@@ -107,9 +107,25 @@
       });
     };
     settleReload();
+
+    /* 刷新淡入：首帧由 CSS 以 0.55 呈现，等这一帧真正画出来之后，再用 160ms 回到 1。
+       用 transition 而不是 animation——animation 从解析阶段就开始计时，
+       若首帧因字体/样式而推迟，动画可能已经跑完，刷新就感知不到 */
+    var mainEl = document.getElementById('main');
+    var fading = !!(mainEl && !reduceMotion);
+    var releaseReload = function () { root.classList.remove('is-reload'); };
+    if (fading) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { mainEl.classList.add('is-fading-in'); });
+      });
+      mainEl.addEventListener('transitionend', function (e) {
+        if (e.propertyName === 'opacity') releaseReload();
+      });
+    }
     window.addEventListener('load', function () {
       settleReload();
-      root.classList.remove('is-reload');
+      /* 兜底：transitionend 未触发（例如标签页在后台）时也要摘掉标记 */
+      setTimeout(releaseReload, fading ? 500 : 0);
     });
   }
 

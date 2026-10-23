@@ -559,6 +559,11 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 /* 刷新：首屏（含浏览器恢复到的滚动位置）直接以终态出现，不重播淡入 */
 .js.is-reload .reveal { opacity: 1; transform: none; }
 
+/* 刷新：整体极短淡入（首帧 0.55 → 160ms 回到 1），让“刷新”这个动作可被感知。
+   只作用于 main：body 背景不参与，因此不会出现白闪；只用 opacity，无位移、无布局变化 */
+.js.is-reload main { opacity: 0.55; }
+.js.is-reload main.is-fading-in { opacity: 1; transition: opacity 160ms ease-out; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width: 1100px) {
   .site-nav { gap: 20px; }
@@ -644,4 +649,6 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .hero-inner .reveal { transition-delay: 0s !important; }
+  /* 刷新淡入也一并降级：直接终态，不闪 */
+  .js.is-reload main { opacity: 1; transition: none; }
 }
