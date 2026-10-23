@@ -314,9 +314,14 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0 0 20px;
-  color: var(--hero-ink);
+  color: var(--color-text); /* 整句默认正文色，仅后半句染强调色 */
   font-synthesis: none;
   text-wrap: balance; /* 极端窄屏才断行时，避免末行只剩一个字 */
+}
+/* 只染“有意思的事”五个字；“做点”保持正文色。
+   两段之间不留空白文本节点，中文连续排列，字距仍由 .hero-title 统一控制 */
+.hero-title-accent {
+  color: var(--hero-ink);
 }
 .hero-sub {
   font-size: clamp(16px, 2vw, 18px);
@@ -351,7 +356,9 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 15px;
-  color: var(--color-accent);
+  /* 与标题强调色同一色系（#8D5D25 / #E0B88A）：
+     旧的 #D4A574 对纸底仅 2.04:1，15px 小字不达标；现色 5.15:1 / 10.72:1 */
+  color: var(--hero-ink);
 }
 .hero-actions {
   display: flex;
