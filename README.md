@@ -1,56 +1,65 @@
-# 你的名字 · 个人主页
+# HogRush · Personal Site
 
-个人网站第一版 —— 纯静态站点（无框架、无构建步骤），暖纸极简 + 编辑部衬线斜体风格，风格参考 [sitor.cc](https://sitor.cc/)。
+The personal website of **Stephen Lee (HogRush)** — a warm-paper editorial design:
+off-white paper texture, serif italic display type, caramel accent, and generous
+whitespace. Plain static HTML/CSS/JS with no build step, deployed to Cloudflare Pages.
 
-## 文件结构
+**Live:** <https://hogrush.pages.dev/>
 
-| 文件 | 说明 |
-| --- | --- |
-| `index.html` | 页面结构与全部文案 |
-| `styles.css` | 设计 token、组件样式、响应式与亮/暗双模式 |
-| `script.js` | 主题切换、移动端导航、滚动入场动效 |
-| `.gitignore` | 忽略 `node_modules/`、`.env`、`dist/` 等 |
+## Stack
 
-## 本地预览
+- Hand-written HTML, CSS, and vanilla JavaScript — no framework, no bundler, no build step
+- Web fonts loaded from Google Fonts (Playfair Display, Inter, Noto Serif SC)
+- Inline SVG icons (Lucide-style, `stroke: currentColor`)
+- Hosted on Cloudflare Pages
 
-任意静态服务器即可，例如：
+## Structure
+
+```
+.
+├── index.html            # Page markup and all copy (hero, about, projects, contact)
+├── styles.css            # Design tokens, components, responsive rules, theme variables
+├── script.js             # Theme toggle, mobile nav, scroll-reveal animations
+├── assets/
+│   └── hogrush-logo*.png # Logo used in the hero
+├── favicon.ico
+├── icon-16.png           # Favicon sizes
+├── icon-32.png
+├── icon-192.png
+├── apple-touch-icon.png  # iOS home-screen icon
+└── .gitignore
+```
+
+## Local preview
+
+Any static file server works — there is nothing to install or compile:
 
 ```bash
 python3 -m http.server 8000
-# 浏览器打开 http://localhost:8000
+# then open http://localhost:8000
 ```
 
-## 部署
+## Deploy
 
-部署目标：Cloudflare Pages（项目名 `personal-site`，生产分支 `main`）。
+The site is served by the Cloudflare Pages project `hogrush`. To publish the current
+directory as-is:
 
 ```bash
-wrangler pages deploy . --project-name=personal-site --branch=main
+bunx wrangler pages deploy . --project-name=hogrush
 ```
 
-> 现生产环境：<https://hogrush.pages.dev>（项目名 `hogrush`）。
+## Theme
 
-## ⚠️ 待替换的占位内容
+The site has a **three-state theme toggle**: `light`, `dark`, and `system`.
 
-上线前请把以下内容替换为真实信息（当前均为占位）：
+- Default is `system`, which follows the visitor's `prefers-color-scheme`.
+- Clicking the toggle cycles `system → light → dark → system`.
+- An explicit choice is persisted in `localStorage` under the key `theme`.
+- An inline script in `<head>` applies the resolved theme before first paint, so there
+  is no flash of the wrong theme.
+- While in `system` mode, the page reacts live to OS-level theme changes.
 
-- [ ] 站点标题与描述（`index.html` 的 `<title>` / `<meta name="description">`）
-- [ ] 名字：「你的名字」（页头、Hero、页脚签名、页脚版权）
-- [ ] 一句话介绍：Hero 副标题
-- [ ] 关于段落：两段占位自我介绍 + 签名
-- [ ] 项目卡片：项目一 ~ 项目四 的标题、描述、标签、链接
-- [ ] 联系方式：邮箱 `you@example.com`（Hero、联系区、页脚）
-- [ ] 社交链接：GitHub `your-username`、X `your-handle`（页脚）
-- [ ] 页脚版权文案
+## License
 
-## 设计说明
-
-- 底色 `#F5F5F0` + 全页 1.5% 透明 SVG 噪点纸纹（暗色模式 3%）
-- 文字 `#1C1917` / `#57534E` / `#A8A29E`；焦糖强调 `#D4A574`（浅底 `#FDF6EE`）
-- 标题：Playfair Display *斜体*（中文回退 Noto Serif SC / 宋体），`letter-spacing: -0.02em`
-- 正文：Inter 16px / 1.5（中文回退 PingFang SC）
-- 卡片：白底 + 1px `#E7E5E4` 边框 + 16px 圆角 + 极轻阴影
-- 关键词高亮：62% 高度处半透明 accent 色带（马克笔效果）
-- 动效：滚动入场 `opacity 0→1 + translateY(14px→0)`（IntersectionObserver）；hover 一律 0.15s ease-out；遵守 `prefers-reduced-motion`
-- 主题：默认跟随系统 `prefers-color-scheme`，手动选择存入 `localStorage`（`<head>` 内联脚本防止首屏闪烁）
-- 图标：Lucide 风格 inline SVG（`stroke: currentColor`）
+© Stephen Lee (HogRush). All rights reserved. The site's text, images, and design are
+not licensed for reuse.
