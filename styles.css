@@ -294,19 +294,18 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   height: auto;
   margin: 0 auto 24px;
 }
-/* 首屏主张：对齐 sitor.cc 的标题字体系统（实测 sitor H1 为
-   Playfair Display italic 400，中文落到系统 Songti SC Regular；
-   44px / 1.15 / -0.02em）。这里沿用同一条 4.6vw 斜率与 32px 下限，
-   因本站 logo 96px、标题 7 字，把上限抬到 4rem 以保住层级，
-   并保证 320px 宽仍能一行放下 7 个字。
-   中文没有真斜体，font-synthesis: none 让 CJK 保持正立，
+/* 首屏主张：严格对齐 sitor.cc 的标题字体系统（实测 sitor H1：
+   Playfair Display italic 400 → 中文落到系统 Songti SC / STSongti-SC-Regular；
+   44px / 1.15 / -0.02em / font-synthesis:none / #f5f5f4）。
+   字号沿用 sitor 同一条 4.6vw 斜率、28px 下限与 44px 上限，不再自行抬高：
+   7 个字在 320px 宽仍能一行放下（28×7 − 字距 ≈ 193px < 272px 可用宽）。
+   中文没有真斜体，font-synthesis:none 让 CJK 保持正立，
    只有 Playfair 的拉丁字形走真斜体——与 sitor 的实际渲染一致 */
 .hero-title {
-  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC",
-    "Source Han Serif SC", "Source Han Serif CN", SimSun, serif;
+  font-family: "Playfair Display", "Songti SC", "STSong", "Noto Serif SC", serif;
   font-style: italic;
   font-weight: 400;
-  font-size: clamp(2rem, 4.6vw, 4rem);
+  font-size: clamp(28px, 4.6vw, 44px);
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0 0 20px;
