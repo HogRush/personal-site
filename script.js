@@ -5,46 +5,68 @@
 (function () {
   'use strict';
 
-  /* ---------- 亮 / 暗主题切换 ---------- */
+  /* ---------- 主题：跟随系统 / 浅色 / 深色 三态 ---------- */
   var root = document.documentElement;
   var toggle = document.getElementById('theme-toggle');
+  var mq = window.matchMedia('(prefers-color-scheme: dark)');
+  var ORDER = ['system', 'light', 'dark'];
+  var LABELS = { system: '跟随系统', light: '浅色', dark: '深色' };
+  var NEXT_LABELS = { system: '浅色', light: '深色', dark: '跟随系统' };
 
-  function currentTheme() {
-    return root.classList.contains('dark') ? 'dark' : 'light';
+  function readPreference() {
+    try {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark' || saved === 'system') return saved;
+    } catch (e) {}
+    return 'system';
   }
+
+  var preference = readPreference();
 
   function syncToggle() {
     if (!toggle) return;
-    var dark = currentTheme() === 'dark';
-    var label = dark ? '切换到亮色模式' : '切换到暗色模式';
+    var label = '当前：' + LABELS[preference] +
+      (preference === 'system' ? '（系统为' + (mq.matches ? '深色' : '浅色') + '）' : '') +
+      '，点击切换为' + NEXT_LABELS[preference];
+    toggle.setAttribute('data-mode', preference);
     toggle.setAttribute('aria-label', label);
-    toggle.setAttribute('aria-pressed', String(dark));
     toggle.setAttribute('title', label);
+  }
+
+  function applyTheme(pref, persist) {
+    preference = pref;
+    var dark = pref === 'dark' || (pref === 'system' && mq.matches);
+    root.classList.toggle('dark', dark);
+    root.setAttribute('data-theme', pref);
+    if (persist) {
+      try { localStorage.setItem('theme', pref); } catch (e) {}
+    }
+    syncToggle();
   }
 
   if (toggle) {
     toggle.addEventListener('click', function () {
-      var next = currentTheme() === 'dark' ? 'light' : 'dark';
-      root.classList.toggle('dark', next === 'dark');
-      try { localStorage.setItem('theme', next); } catch (e) {}
-      syncToggle();
+      applyTheme(ORDER[(ORDER.indexOf(preference) + 1) % ORDER.length], true);
     });
   }
 
-  /* 未手动选择过主题时，跟随系统偏好变化 */
-  var mq = window.matchMedia('(prefers-color-scheme: dark)');
-  var onSchemeChange = function (e) {
-    var saved = null;
-    try { saved = localStorage.getItem('theme'); } catch (err) {}
-    if (!saved) root.classList.toggle('dark', e.matches);
-  };
+  /* 偏好为“跟随系统”时，系统主题变化立即生效（无需刷新） */
+  function onSchemeChange() {
+    if (preference === 'system') applyTheme('system', false);
+    else syncToggle();
+  }
   if (typeof mq.addEventListener === 'function') {
     mq.addEventListener('change', onSchemeChange);
   } else if (typeof mq.addListener === 'function') {
     mq.addListener(onSchemeChange); /* 旧版 Safari */
   }
 
-  syncToggle();
+  /* 其它标签页修改偏好时同步 */
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'theme') applyTheme(readPreference(), false);
+  });
+
+  applyTheme(preference, false);
 
   /* ---------- 移动端导航 ---------- */
   var navToggle = document.getElementById('nav-toggle');

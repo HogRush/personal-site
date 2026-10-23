@@ -17,23 +17,27 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <script>
+    /* 防止主题闪烁：首屏渲染前应用偏好（light / dark / system） */
+    (function () {
+      var pref = 'system';
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark' || saved === 'system') pref = saved;
+      } catch (e) {}
+      var dark = pref === 'dark' ||
+        (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var root = document.documentElement;
+      if (dark) root.classList.add('dark');
+      root.setAttribute('data-theme', pref);
+      /* 标记 JS 可用：滚动入场动效仅在 JS 可用时隐藏元素（无 JS 时内容完整可见） */
+      root.classList.add('js');
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script>
-    /* 防止主题闪烁：首屏渲染前应用已保存 / 系统偏好的主题 */
-    (function () {
-      try {
-        var saved = localStorage.getItem('theme');
-        var dark = saved === 'dark' ||
-          (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        if (dark) document.documentElement.classList.add('dark');
-      } catch (e) {}
-      /* 标记 JS 可用：滚动入场动效仅在 JS 可用时隐藏元素（无 JS 时内容完整可见） */
-      document.documentElement.classList.add('js');
-    })();
-  </script>
 </head>
 <body id="top">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -53,9 +57,10 @@
 
       <div class="header-actions">
         <a class="btn btn-primary header-cta" href="#contact">来信</a>
-        <button class="icon-btn theme-toggle" id="theme-toggle" type="button" aria-label="切换主题" aria-pressed="false" title="切换主题">
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
+        <button class="icon-btn theme-toggle" id="theme-toggle" type="button" data-mode="system" aria-label="当前：跟随系统，点击切换为浅色" title="当前：跟随系统，点击切换为浅色">
+          <svg class="icon-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
           <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
         </button>
         <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
           <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>

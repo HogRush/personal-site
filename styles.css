@@ -255,10 +255,11 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .icon-btn svg { width: 18px; height: 18px; }
 
-/* 主题切换图标 */
-.theme-toggle .icon-sun { display: none; }
-html.dark .theme-toggle .icon-sun { display: block; }
-html.dark .theme-toggle .icon-moon { display: none; }
+/* 主题切换图标：显示当前偏好（跟随系统 / 浅色 / 深色） */
+.theme-toggle svg { display: none; }
+.theme-toggle[data-mode="system"] .icon-monitor,
+.theme-toggle[data-mode="light"] .icon-sun,
+.theme-toggle[data-mode="dark"] .icon-moon { display: block; }
 
 /* 移动端导航按钮 */
 .nav-toggle { display: none; }
