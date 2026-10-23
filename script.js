@@ -97,6 +97,22 @@
   var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* 刷新时：浏览器会恢复滚动位置，先把视口内（含恢复位置上方）的元素
+     标记为终态，避免刷新后先空白再淡入；其余元素仍按滚动入场 */
+  if (root.classList.contains('is-reload')) {
+    var settleReload = function () {
+      var vh = window.innerHeight || document.documentElement.clientHeight;
+      revealEls.forEach(function (el) {
+        if (el.getBoundingClientRect().top < vh) el.classList.add('is-visible');
+      });
+    };
+    settleReload();
+    window.addEventListener('load', function () {
+      settleReload();
+      root.classList.remove('is-reload');
+    });
+  }
+
   if (reduceMotion || !('IntersectionObserver' in window)) {
     revealEls.forEach(function (el) { el.classList.add('is-visible'); });
   } else {

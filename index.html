@@ -32,6 +32,12 @@
       root.setAttribute('data-theme', pref);
       /* 标记 JS 可用：滚动入场动效仅在 JS 可用时隐藏元素（无 JS 时内容完整可见） */
       root.classList.add('js');
+      /* 刷新（reload）时浏览器会恢复滚动位置：先按终态渲染，
+         避免恢复到的位置先空白、再淡入 */
+      var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var isReload = navEntry ? navEntry.type === 'reload'
+        : !!(performance.navigation && performance.navigation.type === 1);
+      if (isReload) root.classList.add('is-reload');
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />

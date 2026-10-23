@@ -556,6 +556,9 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .js .reveal.is-visible { opacity: 1; transform: none; }
 
+/* 刷新：首屏（含浏览器恢复到的滚动位置）直接以终态出现，不重播淡入 */
+.js.is-reload .reveal { opacity: 1; transform: none; }
+
 /* ---------- 响应式 ---------- */
 @media (max-width: 1100px) {
   .site-nav { gap: 20px; }
