@@ -294,16 +294,20 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   height: auto;
   margin: 0 auto 24px;
 }
+/* 首屏主张：中文衬线（Noto Serif SC），不倾斜——中文没有真斜体，
+   强制 italic 只会让浏览器做伪斜切，破坏纸感。字号跨到 4.5rem 撑起
+   视觉中心，同时用 clamp 的 vw 斜率保证 320–390px 也能一行放下 7 个字 */
 .hero-title {
   font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(40px, 7vw, 64px);
+  font-style: normal;
+  font-weight: 600;
+  font-size: clamp(2.2rem, 10.8vw, 4.5rem);
   line-height: 1.15;
   letter-spacing: -0.02em;
   margin: 0 0 20px;
   color: var(--color-text);
   font-synthesis: none;
+  text-wrap: balance; /* 极端窄屏才断行时，避免末行只剩一个字 */
 }
 .hero-sub {
   font-size: clamp(16px, 2vw, 18px);
