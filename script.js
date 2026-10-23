@@ -124,6 +124,206 @@
     }, 3000);
   }
 
+  /* ---------- 页脚纸屑：滚入视口时飘落一次 ---------- */
+  var PAPER_KEY = 'footerPaperPlayed';
+  /* 只用站点色板：柔色 / 边框 / accent / 弱化 / 主色 */
+  var PAPER_COLORS = [
+    { fill: '#FDF6EE', fold: 'rgba(212,165,116,.16)' },
+    { fill: '#FDF6EE', fold: 'rgba(212,165,116,.16)' },
+    { fill: '#E7E5E4', fold: 'rgba(168,162,158,.26)' },
+    { fill: '#E7E5E4', fold: 'rgba(168,162,158,.26)' },
+    { fill: '#D4A574', fold: 'rgba(87,83,78,.16)' },
+    { fill: '#D4A574', fold: 'rgba(87,83,78,.16)' },
+    { fill: '#A8A29E', fold: 'rgba(87,83,78,.18)' },
+    { fill: '#57534E', fold: 'rgba(168,162,158,.24)' }
+  ];
+
+  var paperCanvas = null;
+  var paperCtx = null;
+  var paperRaf = 0;
+  var paperBits = [];
+  var paperW = 0;
+  var paperH = 0;
+  var paperAlpha = 1;
+  var paperLast = 0;
+
+  function paperResize() {
+    if (!paperCanvas) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    paperW = window.innerWidth;
+    paperH = window.innerHeight;
+    paperCanvas.width = Math.round(paperW * dpr);
+    paperCanvas.height = Math.round(paperH * dpr);
+    paperCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function buildPaper(originY) {
+    var count = paperW <= 480 ? 20 + Math.floor(Math.random() * 5)
+                              : 40 + Math.floor(Math.random() * 11);
+    var center = paperW / 2;
+    var spread = Math.min(paperW * 0.82, 980);
+    paperBits = [];
+    for (var i = 0; i < count; i++) {
+      var c = PAPER_COLORS[(Math.random() * PAPER_COLORS.length) | 0];
+      var x = center + (Math.random() - 0.5) * spread;
+      paperBits.push({
+        x: x,
+        y: originY + (Math.random() - 0.5) * 18,
+        vx: (x - center) / (spread / 2) * 0.7 + (Math.random() - 0.5) * 1.1,
+        vy: -(11 + Math.random() * 3),
+        w: 4 + Math.random() * 5,
+        h: 8 + Math.random() * 6,
+        rot: Math.random() * Math.PI * 2,
+        rotV: (Math.random() - 0.5) * 0.1,
+        flip: Math.random() * Math.PI * 2,
+        flipV: 0.035 + Math.random() * 0.055,
+        swayAmp: 8 + Math.random() * 12,
+        swayW: 0.0012 + Math.random() * 0.0012,
+        swayPhase: Math.random() * Math.PI * 2,
+        g: 0.26 + Math.random() * 0.08,
+        drag: 0.988 + Math.random() * 0.004,
+        fall: 2 + Math.random() * 0.7,   /* 终端速度：轻纸片不会被重力一直加速 */
+        color: c.fill,
+        fold: c.fold,
+        life: 3500 + Math.random() * 1000,
+        age: 0
+      });
+    }
+  }
+
+  function drawPaper(p, alpha) {
+    var sy = 0.675 + 0.325 * Math.cos(p.flip);
+    var x = p.x + Math.sin(p.age * p.swayW + p.swayPhase) * p.swayAmp;
+    paperCtx.save();
+    paperCtx.translate(x, p.y);
+    paperCtx.rotate(p.rot);
+    paperCtx.scale(1, sy);
+    paperCtx.globalAlpha = alpha;
+
+    var w = p.w;
+    var h = p.h;
+    paperCtx.fillStyle = p.color;
+    paperCtx.fillRect(-w / 2, -h / 2, w, h);
+    paperCtx.fillStyle = p.fold;
+    paperCtx.fillRect(-w / 2, -h / 2, w * 0.45, h);
+    paperCtx.strokeStyle = 'rgba(28,25,23,.14)';
+    paperCtx.lineWidth = 0.6;
+    paperCtx.strokeRect(-w / 2 + 0.3, -h / 2 + 0.3, w - 0.6, h - 0.6);
+    paperCtx.restore();
+  }
+
+  function paperFrame(now) {
+    var dt = Math.min(2.5, (now - paperLast) / 16.667);
+    paperLast = now;
+    paperCtx.clearRect(0, 0, paperW, paperH);
+
+    var alive = false;
+    for (var i = 0; i < paperBits.length; i++) {
+      var p = paperBits[i];
+      if (p.age >= p.life) continue;
+      p.age += dt * 16.667;
+
+      p.vy += p.g * dt;
+      p.vx *= Math.pow(p.drag, dt);
+      p.vy *= Math.pow(p.drag, dt);
+      if (p.vy > p.fall) p.vy = p.fall;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.rot += p.rotV * dt;
+      p.flip += p.flipV * dt;
+
+      var local = p.age / p.life;
+      var fadeAt = 1 - 800 / p.life;
+      var a = local > fadeAt ? (1 - local) / (1 - fadeAt) : 1;
+      drawPaper(p, Math.max(0, a) * paperAlpha);
+      alive = true;
+    }
+
+    if (alive) {
+      paperRaf = requestAnimationFrame(paperFrame);
+    } else {
+      stopPaper();
+    }
+  }
+
+  function stopPaper() {
+    if (paperRaf) {
+      cancelAnimationFrame(paperRaf);
+      paperRaf = 0;
+    }
+    window.removeEventListener('resize', paperResize);
+    if (paperCanvas && paperCanvas.parentNode) {
+      paperCanvas.parentNode.removeChild(paperCanvas);
+    }
+    paperCanvas = null;
+    paperCtx = null;
+    paperBits = [];
+  }
+
+  function playPaper(footer) {
+    if (paperCanvas) return;
+
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+
+    paperW = window.innerWidth;
+    paperH = window.innerHeight;
+    paperAlpha = root.classList.contains('dark') ? 0.72 : 1;
+
+    var rect = footer.getBoundingClientRect();
+    var originY = Math.max(paperH * 0.45, Math.min(paperH * 0.95, rect.top + 4));
+
+    paperCanvas = document.createElement('canvas');
+    paperCanvas.className = 'paper-fx';
+    paperCanvas.setAttribute('aria-hidden', 'true');
+    paperCanvas.width = Math.round(paperW * dpr);
+    paperCanvas.height = Math.round(paperH * dpr);
+    document.body.appendChild(paperCanvas);
+
+    paperCtx = paperCanvas.getContext('2d');
+    paperCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    buildPaper(originY);
+    paperLast = performance.now();
+    window.addEventListener('resize', paperResize, { passive: true });
+    paperRaf = requestAnimationFrame(paperFrame);
+  }
+
+  function initFooterPaper() {
+    var footer = document.querySelector('.site-footer');
+    if (!footer || typeof window.IntersectionObserver !== 'function') return;
+
+    var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motion.matches) return;
+
+    try {
+      if (sessionStorage.getItem(PAPER_KEY)) return;
+    } catch (e) {}
+
+    var played = false;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting || played || motion.matches) return;
+        played = true;
+        observer.disconnect();
+        try { sessionStorage.setItem(PAPER_KEY, '1'); } catch (e) {}
+        playPaper(footer);
+      });
+    }, { threshold: 0.5 });
+    observer.observe(footer);
+
+    function onMotionChange() {
+      if (motion.matches) stopPaper();
+    }
+
+    if (typeof motion.addEventListener === 'function') {
+      motion.addEventListener('change', onMotionChange);
+    } else if (typeof motion.addListener === 'function') {
+      motion.addListener(onMotionChange); /* 旧版 Safari */
+    }
+  }
+
+  initFooterPaper();
+
   /* ---------- 页脚年份 ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
