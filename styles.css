@@ -323,13 +323,24 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 .hero-title-accent {
   color: var(--hero-ink);
 }
+/* 首屏副文：桌面端用 <br class="hero-br"> 受控断行，做成上长下短的梯形
+   （35 / 16 字 → 568.66 / 288px，66.4% / 33.6%，比值 1.97）；
+   因此桌面必须关掉 text-wrap:balance（它会把两行拉成等长的矩形），
+   移动端隐藏 <br> 并恢复 balance，避免末行孤字。
+   max-width 由 32em 放宽到 34em，只作断行上限，实际宽度由最长一行决定，
+   视觉宽度不变，但给 568.66px 的首行留出 43px 余量，防止字体回退时意外折行 */
 .hero-sub {
   font-size: clamp(16px, 2vw, 18px);
   line-height: 1.7;
   color: var(--color-text-secondary);
   margin: 0 auto 36px;
-  max-width: 32em;
-  text-wrap: balance;
+  max-width: 34em;
+  text-wrap: wrap;
+}
+/* 移动端：撤掉受控断行，交给浏览器自然折行 + balance 防止孤字 */
+@media (max-width: 767px) {
+  .hero-br { display: none; }
+  .hero-sub { text-wrap: balance; }
 }
 /* 关键词马克笔高亮：62% 处半透明 accent 色带 */
 .hl {
