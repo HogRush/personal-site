@@ -323,12 +323,11 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 .hero-title-accent {
   color: var(--hero-ink);
 }
-/* 首屏副文：桌面端用 <br class="hero-br"> 受控断行，做成上长下短的梯形
-   （35 / 16 字 → 568.66 / 288px，66.4% / 33.6%，比值 1.97）；
+/* 首屏副文：桌面端用 <br class="hero-br"> 受控断行，断点由用户指定，
+   固定在“人，”之后：第一行 22 字、第二行 26 字，两行均远小于 max-width；
    因此桌面必须关掉 text-wrap:balance（它会把两行拉成等长的矩形），
    移动端隐藏 <br> 并恢复 balance，避免末行孤字。
-   max-width 由 32em 放宽到 34em，只作断行上限，实际宽度由最长一行决定，
-   视觉宽度不变，但给 568.66px 的首行留出 43px 余量，防止字体回退时意外折行 */
+   max-width 保持 34em（18px 下 612px），为 26 字的第二行（约 470–490px）留足余量 */
 .hero-sub {
   font-size: clamp(16px, 2vw, 18px);
   line-height: 1.7;
