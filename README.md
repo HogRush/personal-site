@@ -22,11 +22,14 @@ whitespace. Plain static HTML/CSS/JS with no build step, deployed to Cloudflare 
 ├── script.js             # Theme toggle, mobile nav, scroll-reveal animations
 ├── assets/
 │   └── hogrush-logo*.png # Logo used in the hero
-├── favicon.ico
-├── icon-16.png           # Favicon sizes
-├── icon-32.png
-├── icon-192.png
+├── favicon.ico           # Multi-size favicon (16/32/48)
+├── favicon-16x16.png     # Favicon sizes
+├── favicon-32x32.png
+├── icon-192.png          # PWA icons
+├── icon-512.png
+├── icon-512-maskable.png # Android adaptive icon (20% safe zone)
 ├── apple-touch-icon.png  # iOS home-screen icon
+├── site.webmanifest      # PWA manifest
 └── .gitignore
 ```
 
