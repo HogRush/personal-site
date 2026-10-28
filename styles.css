@@ -2466,171 +2466,475 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 }
 
 /* ============================================================
-   03 · 文档行：内嵌 PDF 预览（集群产品内容流程文档）
-   行本身是展开开关（不再外跳），面板紧贴其下、同一节内展开
+   03 · 文档卡 + 原位固定高度阅读器（集群产品内容流程文档）
+   默认形态是一张卡（整张卡只加载一张封面图）；点击后在卡片原位
+   展开固定高度阅读器，页面图由 IntersectionObserver 按需加载。
+   页数变化只改变阅读器里的页节点，不改变卡片数量。
    ============================================================ */
-.cs-ev-row--doc {
+.cs-doc-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-areas:
+    "cover body"
+    "reader reader";
+  column-gap: 20px;
+  margin: 16px 0 18px;
+  padding: 18px 20px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+.cs-doc-card:hover { box-shadow: var(--shadow-md); }
+.cs-doc-card:hover,
+.cs-doc-card.is-open { border-color: color-mix(in srgb, var(--color-accent) 20%, var(--color-border)); }
+
+/* 整卡命中区：一张覆盖层按钮，Tab 可达、Enter 展开；卡内按钮/链接抬高一层 */
+.cs-doc-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   width: 100%;
+  height: 100%;
+  padding: 0;
   font: inherit;
-  text-align: left;
-  background-color: transparent;
+  background: none;
   border: 0;
-  border-bottom: 1px solid var(--color-border);
-  border-radius: 0;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
 }
-.cs-ev-row--doc:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-.cs-ev-row--doc .cs-ev-go svg { transition: transform 0.2s ease-out; }
-.cs-ev-row--doc[aria-expanded="true"] .cs-ev-go { color: var(--color-accent); opacity: 1; }
-.cs-ev-row--doc[aria-expanded="true"] .cs-ev-go svg { transform: rotate(180deg); }
+.cs-doc-hit:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 3px; }
 
-.cs-sop-panel {
-  margin: 12px 0;
-  padding: 24px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-}
-.cs-sop-panel[hidden] { display: none; }
-.cs-sop-panel-h {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-.cs-sop-panel-t {
-  font-size: 13px;
+.cs-doc-badge {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 3;
+  padding: 2px 9px;
+  font-size: 11px;
+  line-height: 1.6;
   letter-spacing: 0.02em;
-  color: var(--color-text-muted);
-}
-.cs-sop-open {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12.5px;
-  letter-spacing: 0.01em;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
+  color: var(--hero-ink);
+  background-color: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: var(--radius-full);
   white-space: nowrap;
-  transition: color 0.15s ease-out, border-color 0.15s ease-out;
+  pointer-events: none;
 }
-.cs-sop-open svg { width: 11px; height: 11px; opacity: 0.9; }
-.cs-sop-open:hover { color: var(--hero-ink); border-bottom-color: currentColor; }
-.cs-sop-open:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 
-.cs-sop-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-.cs-sop-thumb {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-  padding: 0;
-  font: inherit;
-  text-align: left;
-  background: none;
-  border: 0;
-  border-radius: 8px;
-  cursor: zoom-in;
-  transition: transform 0.15s ease-out;
-}
-.cs-sop-shot {
-  display: block;
+.cs-doc-cover {
+  grid-area: cover;
   position: relative;
-  aspect-ratio: 1000 / 1415;   /* 固定宽高比：懒加载图片不会撑动布局 */
+  z-index: 2;
+  width: 96px;
+  height: 136px;
   overflow: hidden;
   background-color: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s ease-out;
+  pointer-events: none;
 }
-.cs-sop-shot img {
+.cs-doc-cover img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.cs-sop-thumb:hover { transform: translateY(-2px); }
-.cs-sop-thumb:hover .cs-sop-shot { box-shadow: var(--shadow-md); }
-.cs-sop-thumb:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 3px; }
-.cs-sop-cap {
-  font-size: 11px;
-  letter-spacing: 0.02em;
-  color: var(--color-text-muted);
-}
 
-/* lightbox 多图翻页 */
-.cs-lb-infoline { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.cs-lb-count {
-  font-family: var(--font-metric);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-}
-.cs-lb-count[hidden] { display: none; }
-.cs-lb-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+.cs-doc-body {
+  grid-area: body;
+  position: relative;
   z-index: 2;
-  width: 36px;
-  height: 36px;
+  min-width: 0;
+  pointer-events: none;      /* 文字不吃点击，让整卡命中区生效 */
+}
+.cs-doc-t {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  padding-right: 96px;       /* 给右上角状态徽标留位 */
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+}
+.cs-doc-t-ic {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border-hover);
-  border-radius: var(--radius-full);
+  flex: none;
+  width: 24px;
+  height: 24px;
+  color: var(--hero-ink);
+  background-color: var(--color-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 6px;
+}
+.cs-doc-t-ic svg { width: 13px; height: 13px; }
+.cs-doc-sub {
+  margin: 7px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
   color: var(--color-text-secondary);
-  box-shadow: var(--shadow-sm);
+}
+.cs-doc-desc {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+}
+.cs-doc-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+.cs-doc-chips span {
+  padding: 3px 9px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  background-color: var(--color-primary-soft);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+.cs-doc-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 16px 0 0;
+  pointer-events: auto;      /* 按钮与下载链接单独可点 */
+}
+.cs-doc-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-accent-foreground);
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+}
+.cs-doc-primary svg { width: 13px; height: 13px; }
+.cs-doc-primary:hover { background-color: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+.cs-doc-primary:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+.cs-doc-dl {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-border-hover);
+  padding-bottom: 1px;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out;
+}
+.cs-doc-dl:hover { color: var(--color-text); border-bottom-color: currentColor; }
+.cs-doc-dl:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+/* ---------- 阅读器（原位展开，固定高度，内部滚动） ---------- */
+.cs-doc-reader {
+  grid-area: reader;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  margin-top: 16px;
+  overflow: hidden;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+.cs-doc-reader[hidden] { display: none; }
+
+.cs-doc-tb {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 52px;
+  padding: 0 8px 0 16px;
+  background-color: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+  z-index: 3;
+}
+.cs-doc-tb-l {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.cs-doc-pageno {
+  font-family: var(--font-metric);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.cs-doc-pbar {
+  position: relative;
+  flex: 1;
+  max-width: 220px;
+  height: 1px;
+  background-color: var(--color-border-hover);
+  border-radius: 1px;
+}
+.cs-doc-pbar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 8.33%;
+  background-color: var(--color-accent);
+  border-radius: 1px;
+  transition: width 0.18s ease-out;
+}
+.cs-doc-tb-r { display: flex; align-items: center; gap: 2px; flex: none; }
+.cs-doc-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.15s ease-out, color 0.15s ease-out;
 }
-.cs-lb-nav[hidden] { display: none; }
-.cs-lb-nav.is-prev { left: 10px; }
-.cs-lb-nav.is-next { right: 10px; }
-.cs-lb-nav:hover { background-color: var(--color-primary-soft); color: var(--color-text); }
-.cs-lb-nav:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-.cs-lb-nav svg { width: 16px; height: 16px; }
+.cs-doc-tool svg { width: 15px; height: 15px; }
+.cs-doc-tool:hover { background-color: var(--color-primary-soft); color: var(--color-text); }
+.cs-doc-tool[aria-expanded="true"] { background-color: var(--color-primary-soft); color: var(--hero-ink); }
+.cs-doc-tool:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
 
-@media (max-width: 900px) {
-  .cs-sop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-doc-jumps {
+  flex: none;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
 }
-@media (max-width: 640px) {
-  .cs-sop-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-  .cs-sop-panel { padding: 16px; }
-  .cs-sop-panel-h { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .cs-sop-open { white-space: normal; }
-  .cs-lb-nav { width: 32px; height: 32px; }
-  .cs-lb-nav.is-prev { left: 6px; }
-  .cs-lb-nav.is-next { right: 6px; }
+.cs-doc-jumps[hidden] { display: none; }
+.cs-doc-jumps-in {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+}
+.cs-doc-jump {
+  flex: none;
+  padding: 7px 11px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+.cs-doc-jump:hover { color: var(--color-text); border-color: var(--color-border-hover); }
+.cs-doc-jump.is-on {
+  color: var(--hero-ink);
+  background-color: var(--color-accent-soft);
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+.cs-doc-jump:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+.cs-doc-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.cs-doc-scroll:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
+.cs-doc-pages {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;            /* 页宽 = 面板内宽 − 32px */
+}
+.cs-doc-page {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1000 / 1415; /* 占位固定：图片到位不会撑动布局 */
+  overflow: hidden;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+.cs-doc-page:not(.is-on) {
+  background-image: repeating-linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--color-text) 7%, transparent) 0 1px,
+    transparent 1px 9px
+  );
+}
+.cs-doc-page img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* 多图 lightbox：竖版文档页按高度铺满，不做 16:9 留白 */
-.cs-lb-frame.has-gallery {
-  width: fit-content;
-  max-width: 100%;
-  margin: 0 auto;
-  aspect-ratio: auto;
+/* ---------- 全屏沉浸阅读 ---------- */
+.cs-doc-fs {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--color-bg);
 }
-.cs-lb-frame.has-gallery .cs-lb-img {
-  width: auto;
-  max-width: 100%;
-  max-height: 74vh;
-  margin: 0 auto;
+.cs-doc-fs[hidden] { display: none; }
+.cs-doc-fs-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 52px;
+  padding: 0 16px;
+  background-color: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
 }
-.cs-lb.is-gallery .cs-lb-inner { width: fit-content; max-width: min(1080px, 100%); }
+.cs-doc-fs-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-doc-fs-count {
+  font-family: var(--font-metric);
+  font-size: 12.5px;
+  letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.cs-doc-fs-exit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out;
+}
+.cs-doc-fs-exit svg { width: 12px; height: 12px; }
+.cs-doc-fs-exit:hover { color: var(--color-text); border-color: var(--color-border-hover); }
+.cs-doc-fs-exit:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+.cs-doc-fs-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 68px 96px 24px;
+}
+.cs-doc-fs-img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+}
+.cs-doc-fs-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  color: var(--color-text-secondary);
+  background-color: color-mix(in srgb, var(--color-surface) 62%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  opacity: 0.85;
+  cursor: pointer;
+  transition: opacity 0.15s ease-out, background-color 0.15s ease-out, color 0.15s ease-out;
+}
+.cs-doc-fs-nav.is-prev { left: 18px; }
+.cs-doc-fs-nav.is-next { right: 18px; }
+.cs-doc-fs-nav svg { width: 20px; height: 20px; }
+.cs-doc-fs-nav:hover { opacity: 1; background-color: var(--color-surface); color: var(--color-text); }
+.cs-doc-fs-nav:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+@media (max-width: 900px) {
+  .cs-doc-reader { height: 65vh; }
+  .cs-doc-card { padding: 16px; column-gap: 16px; }
+  .cs-doc-fs-stage { padding: 64px 76px 20px; }
+}
+
+@media (max-width: 640px) {
+  .cs-doc-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "cover"
+      "body"
+      "reader";
+    row-gap: 14px;
+    padding: 16px;
+  }
+  .cs-doc-reader { height: 60vh; }
+  .cs-doc-t { padding-right: 0; }
+  .cs-doc-badge { top: 12px; right: 14px; }
+  .cs-doc-actions { gap: 10px 14px; }
+  .cs-doc-tb { padding: 0 6px 0 12px; }
+  .cs-doc-pbar { max-width: none; }
+  .cs-doc-jumps-in { padding: 8px 10px; }
+  .cs-doc-fs-bar { padding: 0 12px; gap: 10px; }
+  .cs-doc-fs-exit { padding: 0 10px; }
+  .cs-doc-fs-stage { padding: 62px 58px 18px; }
+  .cs-doc-fs-nav { width: 40px; height: 40px; }
+  .cs-doc-fs-nav.is-prev { left: 8px; }
+  .cs-doc-fs-nav.is-next { right: 8px; }
+  .cs-doc-fs-nav svg { width: 16px; height: 16px; }
+}
