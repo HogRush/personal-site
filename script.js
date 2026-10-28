@@ -371,6 +371,25 @@
     }
   );
 
+  /* ---------- 整卡可点：文字层盖在 stretched link 遮罩之上以便拖选，
+       点在这些文字上时由脚本把点击转交给标题链接（选中文字时不跳转） ---------- */
+  Array.prototype.forEach.call(
+    document.querySelectorAll('.blog-card--live'),
+    function (card) {
+      card.addEventListener('click', function (e) {
+        /* 标题链接自身、或卡片内其它真实链接：交给浏览器原生处理 */
+        if (e.target.closest && e.target.closest('a[href]')) return;
+        /* 用户正在选字复制：不跳转，保留选中结果 */
+        var selection = window.getSelection && window.getSelection();
+        if (selection && String(selection).length > 0) return;
+        var link = card.querySelector('.blog-card-link');
+        if (!link || link.getAttribute('aria-disabled') === 'true') return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        window.location.href = link.href;
+      });
+    }
+  );
+
   /* ---------- 页脚年份 ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());

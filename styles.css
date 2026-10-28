@@ -767,6 +767,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 
 /* 卡片：720×auto、padding 28/32、圆角 16、1px 边框、hover 上浮 2px */
 .blog-card {
+  position: relative; /* 承载 stretched link 的定位上下文 */
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -780,6 +781,42 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
+
+/* 已上线文章：整张卡片可点（stretched link）。
+   遮罩是标题链接的 ::after，DOM 里仍只有一个链接，屏幕阅读器不会读到重复链接。
+   文字层抬到遮罩之上，保证摘要/元信息仍能拖选复制；这些区域的点击由脚本代理到标题链接 */
+.blog-card--live { cursor: pointer; }
+.blog-card--live .blog-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.blog-card--live .blog-meta,
+.blog-card--live .blog-card-title,
+.blog-card--live .blog-card-summary,
+.blog-card--live .blog-card-more {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+.blog-card--live .blog-card-link:focus-visible { outline: none; }
+.blog-card--live:has(.blog-card-link:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* 占位文章：正文未上线，保持不可点，视觉上明确区分 */
+.blog-card--soon:hover,
+.blog-card--soon:focus-within {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+.blog-card--soon .blog-card-link { cursor: default; }
+.blog-card--soon .blog-card-more { color: var(--color-text-muted); }
+.blog-card--soon:hover .blog-card-more { gap: 4px; color: var(--color-text-muted); }
 
 /* 元信息行：分类 chip → 置顶 → 日期 → 阅读时长 */
 .blog-meta {
