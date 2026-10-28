@@ -1021,7 +1021,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   border-top: 1px solid var(--color-border);
 }
 .article-body .article-signoff-line {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-family: var(--font-serif);
   font-style: italic;
   font-weight: 400;
@@ -1033,9 +1033,9 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .article-body .article-signoff-end {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   color: var(--color-text-muted);
 }
 
