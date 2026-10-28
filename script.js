@@ -356,6 +356,17 @@
 
   initFooterPaper();
 
+  /* ---------- 占位链接：文章详情页尚未上线，点击不跳转、不回到页首 ---------- */
+  Array.prototype.forEach.call(
+    document.querySelectorAll('a[aria-disabled="true"]'),
+    function (link) {
+      link.addEventListener('click', function (e) {
+        /* 只拦默认跳转（# 会滚回页首），焦点保留在链接上，方便继续用键盘浏览 */
+        e.preventDefault();
+      });
+    }
+  );
+
   /* ---------- 页脚年份 ---------- */
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
