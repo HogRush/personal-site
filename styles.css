@@ -1118,3 +1118,197 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .article-invite { padding: 36px 20px 56px; }
   .article-title { font-size: 26px; }
 }
+
+
+/* ============================================================
+   工作项目页（/work）
+   全部沿用既有变量与组件：.blog-hero 页首尺度、.blog-list 的 720/20 节奏、
+   .card-index / .card-title / .card-tags / .tag / .card-link 的卡片语言，
+   以及 .article-invite 的来信块。没有新增任何颜色。
+   ============================================================ */
+.work-page { min-height: calc(100vh - var(--header-h)); }
+
+/* 页首：blog-hero 的居中节奏 + 一行小标签（.section-kicker 的线 + 间距） */
+.work-hero { padding-bottom: 8px; }
+.work-hero .section-kicker {
+  justify-content: center;
+  margin: 0 0 14px;
+}
+.work-hero-sub {
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: balance;
+}
+
+/* 列表：与博客列表同一列宽（720）与同一间距（20） */
+.work-list-section { padding: 32px 24px 40px; }
+
+/* 卡片：白底 / 1px 边框 / 16 圆角 / 28-32 内边距 / hover 上浮 2px（同 .blog-card、.card） */
+.work-card {
+  position: relative; /* 承载 stretched link 的定位上下文 */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 28px 32px;
+  transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out,
+    transform 0.2s ease-out, background-color 0.3s ease;
+}
+.work-card:hover,
+.work-card:focus-within {
+  border-color: var(--color-border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 整卡可点：遮罩挂在「查看案例」上（同 blog 卡片的 stretched link 方案），
+   文字层抬到遮罩之上，摘要/元信息仍可拖选复制 */
+.work-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.work-card > .card-index,
+.work-card > .card-title,
+.work-card > .work-tagline,
+.work-card > .work-meta,
+.work-card > .work-facts,
+.work-card > .card-tags {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+.work-card-link:focus-visible { outline: none; }
+.work-card:has(.work-card-link:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* 占位案例：详情页未上线，整卡不可点——不上浮、箭头弱化、cursor 默认 */
+.work-card--soon { cursor: default; }
+.work-card--soon:hover,
+.work-card--soon:focus-within {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border);
+}
+.work-card--soon > .card-index,
+.work-card--soon > .card-title,
+.work-card--soon > .work-tagline,
+.work-card--soon > .work-meta,
+.work-card--soon > .work-facts,
+.work-card--soon > .card-tags { cursor: default; }
+.work-card--soon .work-card-link { cursor: default; color: var(--color-text-muted); }
+.work-card--soon .work-card-link:hover { color: var(--color-text-muted); }
+.work-card--soon .work-card-link:hover svg { transform: none; }
+.work-card--soon:has(.work-card-link:focus-visible) { outline: none; }
+
+/* 一句话定位：次级文字，紧接项目名 */
+.work-tagline {
+  margin: -2px 0 14px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+/* 元信息行：角色 / 时间 / 类型，13px 弱化 + 「·」分隔（同 .blog-meta 的节奏） */
+.work-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+.work-meta-item { display: inline-flex; align-items: baseline; gap: 6px; }
+.work-meta-label { color: var(--color-text-muted); letter-spacing: 0.04em; }
+.work-meta-value { color: var(--color-text-secondary); }
+.work-meta-sep { color: var(--color-border-hover); }
+
+/* 概述 / 结果：细线分隔的字段区，标签在左、正文在右 */
+.work-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 20px;
+}
+.work-fact {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.work-fact-label {
+  margin: 0;
+  padding-top: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+}
+.work-fact-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+
+/* 结果：一条 accent 竖线区分「带口径的结论」，标签用强调墨色 */
+.work-fact--result .work-fact-label { color: var(--hero-ink); }
+.work-fact--result .work-fact-text {
+  border-left: 2px solid var(--color-accent);
+  padding-left: 12px;
+  color: var(--color-text);
+}
+
+/* 页尾来信：复用文章页的 invite 卡片，去掉与列表重复的上边距 */
+.work-invite { padding: 24px 24px 96px; }
+
+@media (max-width: 768px) {
+  .work-hero { padding-bottom: 4px; }
+  .work-list-section { padding: 24px 24px 32px; }
+  .work-card { padding: 24px; }
+  .work-card .card-title { font-size: 18px; }
+  .work-invite { padding: 20px 24px 64px; }
+}
+
+@media (max-width: 480px) {
+  .work-hero { padding-bottom: 2px; }
+  .work-list-section { padding: 20px 16px 24px; }
+  .work-card { padding: 20px; }
+  /* 窄屏：字段标签折到正文上方 */
+  .work-fact { grid-template-columns: 1fr; gap: 4px; }
+  .work-fact-label { padding-top: 0; }
+  .work-invite { padding: 16px 16px 56px; }
+}
+
+/* ---------- 首页「工作项目」卡：已上线，整卡可点 ---------- */
+.card--live { position: relative; cursor: pointer; }
+.card--live .card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.card--live > .card-index,
+.card--live > .card-title,
+.card--live > .card-desc,
+.card--live > .card-tags {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+.card--live .card-link:focus-visible { outline: none; }
+.card--live:has(.card-link:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}

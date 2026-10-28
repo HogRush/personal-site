@@ -372,9 +372,10 @@
   );
 
   /* ---------- 整卡可点：文字层盖在 stretched link 遮罩之上以便拖选，
-       点在这些文字上时由脚本把点击转交给标题链接（选中文字时不跳转） ---------- */
+     点在这些文字上时由脚本把点击转交给卡片主链接（选中文字时不跳转）。
+     首页已上线的项目卡（.card--live）与工作页的案例卡（.work-card--live）同样适用 ---------- */
   Array.prototype.forEach.call(
-    document.querySelectorAll('.blog-card--live'),
+    document.querySelectorAll('.blog-card--live, .card--live, .work-card--live'),
     function (card) {
       card.addEventListener('click', function (e) {
         /* 标题链接自身、或卡片内其它真实链接：交给浏览器原生处理 */
@@ -382,7 +383,7 @@
         /* 用户正在选字复制：不跳转，保留选中结果 */
         var selection = window.getSelection && window.getSelection();
         if (selection && String(selection).length > 0) return;
-        var link = card.querySelector('.blog-card-link');
+        var link = card.querySelector('.blog-card-link, .card-link, .work-card-link');
         if (!link || link.getAttribute('aria-disabled') === 'true') return;
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
         window.location.href = link.href;
