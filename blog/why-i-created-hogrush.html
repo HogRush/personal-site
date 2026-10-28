@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>为什么我创建了 HogRush · HogRush</title>
+  <meta name="description" content="把想法做出来，把过程留下来。关于 HogRush 的由来，以及我想在这里记录什么。" />
+  <meta name="theme-color" content="#f5f5f0" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content="为什么我创建了 HogRush" />
+  <meta property="og:description" content="把想法做出来，把过程留下来。" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-10-28" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="canonical" href="https://hogrush.pages.dev/blog/why-i-created-hogrush" />
+  <link rel="icon" href="/favicon.ico?v=20261028b" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261028b" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261028b" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261028b" />
+  <link rel="manifest" href="/site.webmanifest?v=20261028b" />
+  <script>
+    /* 防止主题闪烁：首屏渲染前应用偏好（light / dark / system） */
+    (function () {
+      var pref = 'system';
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark' || saved === 'system') pref = saved;
+      } catch (e) {}
+      var dark = pref === 'dark' ||
+        (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var root = document.documentElement;
+      if (dark) root.classList.add('dark');
+      root.setAttribute('data-theme', pref);
+      /* 标记 JS 可用：滚动入场动效仅在 JS 可用时隐藏元素（无 JS 时内容完整可见） */
+      root.classList.add('js');
+      /* 刷新（reload）时浏览器会恢复滚动位置：先按终态渲染，
+         避免恢复到的位置先空白、再淡入 */
+      var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var isReload = navEntry ? navEntry.type === 'reload'
+        : !!(performance.navigation && performance.navigation.type === 1);
+      if (isReload) root.classList.add('is-reload');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body id="top" data-no-paper>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="paper-texture" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="HogRush · 返回首页">
+        <img class="brand-mark" src="/assets/hogrush-logo.png"
+             srcset="/assets/hogrush-logo.png 1x, /assets/hogrush-logo@2x.png 2x"
+             alt="" width="32" height="32" decoding="async" />
+        <span class="brand-name">HogRush</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a class="nav-link" href="/#about">关于</a>
+        <a class="nav-link" href="/#projects">项目</a>
+        <a class="nav-link" href="/blog" aria-current="page">博客</a>
+        <a class="nav-link" href="/#contact">联系</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-primary header-cta" href="/#contact">来信</a>
+        <button class="icon-btn theme-toggle" id="theme-toggle" type="button" data-mode="system" aria-label="当前：跟随系统，点击切换为浅色" title="当前：跟随系统，点击切换为浅色">
+          <svg class="icon-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
+        </button>
+        <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <svg class="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="article-page">
+    <article class="article" aria-labelledby="article-title">
+      <div class="article-shell">
+        <!-- 返回博客：样式对标 sitor 的「Back to blog」 -->
+        <a class="article-back" href="/blog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+          <span>返回博客</span>
+        </a>
+
+        <!-- 元信息：分类 → 日期 → 阅读时长 -->
+        <div class="article-meta reveal">
+          <span class="blog-tag blog-tag--thoughts">思考</span>
+          <time datetime="2026-10-28">2026 年 10 月 28 日</time>
+          <span class="article-time">3 分钟阅读</span>
+        </div>
+
+        <h1 class="article-title reveal" id="article-title">为什么我创建了 HogRush</h1>
+
+        <p class="article-deck reveal">把想法做出来，把过程留下来。</p>
+
+        <hr class="article-rule" />
+
+        <div class="article-body">
+          <section id="origin" aria-labelledby="h-origin">
+            <h2 id="h-origin">00.  HogRush的由来</h2>
+            <p>HogRush 这个名字，直接翻译是活猪冲锋，来源于一个我挺喜欢的游戏中的角色--LOL 中凛冬之怒瑟庄妮的Q技能，她会骑着钢鬃猪往前冲刺，击飞敌人，我觉得这个技能很有意思，于是我使用此作为我的互联网名字，就这样。</p>
+          </section>
+
+          <section id="start" aria-labelledby="h-start">
+            <h2 id="h-start">01. 从一个简单的问题开始</h2>
+            <p>每天都有新的工具、技术和想法出现。尤其是 AI 发展得越来越快，过去需要一个团队完成的事，如今一个人也有机会尝试。</p>
+            <p>但信息越多，我越常问自己：看过的文章、研究过的工具、突然冒出的灵感，最后留下了什么？</p>
+            <p>熟悉的人我都知道，我有收藏文档和知识的习惯，像数字仓鼠一样，我相信很多人跟我一样：我们习惯收藏，却没有整理；习惯讨论可能性，却迟迟没有动手。偶尔完成一个项目，回头看时也只剩结果，最有价值的选择、试错和思考反而被遗忘了。</p>
+            <p>我创建 HogRush，就是想改变这件事。给自己的探索一个固定的地方，让零散的想法慢慢变成作品，也让走过的路有迹可循。</p>
+          </section>
+
+          <section id="more-than-showcase" aria-labelledby="h-more-than-showcase">
+            <h2 id="h-more-than-showcase">02. 不只是展示「我做过什么」</h2>
+            <p>个人网站很容易成为一份线上简历：展示成果、列出技能、放上几个漂亮的项目截图。</p>
+            <p>但我更想留下的是成果背后的过程。</p>
+            <p>一个需求是怎么被发现的？为什么选择这条路线？哪次尝试失败了，后来又如何调整？</p>
+            <p>这些不完美的细节，也许不够适合放进作品集，却最能说明一个人如何成长。</p>
+            <p>所以 HogRush 不打算只展示完成品。一个刚刚开始的实验、一篇尚未想透的笔记、一次推翻重来的经历，都值得拥有位置。</p>
+            <p>这里可以有结论，也可以保留问题。</p>
+          </section>
+
+          <section id="what-i-record" aria-labelledby="h-what-i-record">
+            <h2 id="h-what-i-record">03. 在这里，我想记录什么</h2>
+            <h3>首先是项目与实践。</h3>
+            <p>无论是日常工作中的产品思考、内容增长经验，还是自己动手做的小工具，我希望尽可能讲清楚问题、做法与结果，而不只是说一句「做成了」。</p>
+            <h3>其次是 AI 与新技术的探索。</h3>
+            <p>我关心的不只是某个模型有多强、某款工具有多火，而是它能否真正帮助我们解决问题、减少重复劳动，或者让一个原本难以实现的想法成为可能。</p>
+            <h3>还有知识与反思。</h3>
+            <p>值得反复使用的方法、踩过的坑、读过之后改变了我看法的内容，都可以在这里沉淀。</p>
+            <p>记录不是为了证明自己一直在进步，而是为了日后回看时，知道自己为什么改变。</p>
+          </section>
+
+          <section id="how-it-grows" aria-labelledby="h-how-it-grows">
+            <h2 id="h-how-it-grows">04. 我希望它慢慢长成什么样</h2>
+            <p>我完全无意于急着把 HogRush 做成一个宏大的平台，也不想为了更新而更新。</p>
+            <p>我希望它对我来说就是一个独立、真实、可持续的空间：内容由好奇心和实际问题驱动。</p>
+            <p>未来，这里也许会积累更多产品、实验和长短不一的文章。</p>
+            <p>有人因为一篇记录少走了弯路，有人因为一个项目受到启发，甚至有人愿意一起交流、一起创造，那会是额外的惊喜。</p>
+          </section>
+
+          <section id="start-now" aria-labelledby="h-start-now">
+            <h2 id="h-start-now">05. 先开始，再慢慢完善</h2>
+            <p>HogRush 对我来说意味着一种向前的劲头：有想法就试，有问题就学，有收获就记。</p>
+            <p>它不需要从第一天起就完美，只需要随着每一次实践变得更具体、更有用。</p>
+            <p>多年后再打开这个网站，我希望看到的不只是完成了多少事情，更是曾经怎样思考、怎样尝试、怎样一步步走到今天。</p>
+          </section>
+
+          <!-- 尾句 -->
+          <div class="article-signoff">
+            <p class="article-signoff-line">保持好奇，把想法做出来。</p>
+            <p class="article-signoff-end">欢迎来到 HogRush。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 文末卡片（对标 sitor 的 invite card 位置） -->
+      <aside class="article-invite" aria-label="来信">
+        <div class="article-invite-card">
+          <p class="article-invite-text">有想法，随时来信。</p>
+          <a class="btn btn-primary" href="/#contact">写封邮件</a>
+        </div>
+      </aside>
+    </article>
+  </main>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="brand" href="/" aria-label="HogRush · 返回首页">
+        <span class="brand-name">HogRush</span>
+      </a>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="/#about">关于</a>
+        <a href="/#projects">项目</a>
+        <a href="/blog">博客</a>
+        <a href="/#contact">联系</a>
+      </nav>
+      <div class="footer-social">
+        <a class="icon-btn" href="https://github.com/HogRush" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+        </a>
+        <a class="icon-btn" href="mailto:kdsc2974@gmail.com" aria-label="邮箱">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+        </a>
+        <a class="icon-btn" href="https://x.com/your-handle" target="_blank" rel="noopener" aria-label="X（Twitter）">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
+        </a>
+      </div>
+    </div>
+    <p class="footer-bottom">© <span id="year">2026</span> HogRush · 保持好奇，把想法做出来</p>
+  </footer>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>

@@ -321,6 +321,10 @@
   }
 
   function initFooterPaper() {
+    /* 博客页（列表 / 文章）不要纸屑：body 上带 data-no-paper 即整体跳过，
+       不建 canvas、不挂 observer；主站不受影响，行为完全不变 */
+    if (document.body && document.body.hasAttribute('data-no-paper')) return;
+
     var footer = document.querySelector('.site-footer');
     if (!footer || typeof window.IntersectionObserver !== 'function') return;
 

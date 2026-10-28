@@ -891,3 +891,195 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .blog-card { padding: 20px; }
   .blog-list { gap: 16px; }
 }
+
+
+/* ============================================================
+   博客文章详情页（尺度逐项对标 sitor.ai 文章页：
+   720 容器 / 672 正文、16px·1.75 正文、22px h2、上游 64 下游 80；
+   颜色与字体走本站三态主题变量）
+   ============================================================ */
+.article-page { padding: 64px 0 0; min-height: calc(100vh - var(--header-h)); }
+
+.article { display: block; }
+
+.article-shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 返回博客：18px 箭头 + 14px/500、次级色（sitor「Back to blog」同尺度） */
+.article-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 36px;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease-out;
+}
+.article-back svg { width: 18px; height: 18px; }
+.article-back:hover { color: var(--color-text); }
+
+/* 元信息行：分类 chip → 日期 → 阅读时长（sitor：gap 12 / 下距 20） */
+.article-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 20px;
+}
+.article-meta time,
+.article-time {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* 标题：32px / 1.3 / 衬线斜体 / 字距 -0.02em / 下距 40（sitor 实测同值） */
+.article-title {
+  margin: 0 0 40px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  font-synthesis: none;
+  text-wrap: pretty;
+}
+
+/* 引言：sitor 用引言块承接副标题；本站副标题仅一行，改用衬线引题（见汇报） */
+.article-deck {
+  margin: 0 0 40px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--color-text-secondary);
+  font-synthesis: none;
+}
+
+.article-rule {
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+/* 正文：16px / 28px（1.75）/ 段距 16（sitor 实测） */
+.article-body { padding: 0 0 8px; }
+.article-body p {
+  margin: 0 0 16px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+  text-wrap: pretty;
+}
+.article-body p:last-child { margin-bottom: 0; }
+
+/* 小节标题：22px / 600 / 行高 1.75 / 上 48 下 16（sitor 实测） */
+.article-body h2 {
+  margin: 48px 0 16px;
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.75;
+  letter-spacing: 0;
+  color: var(--color-text);
+  text-wrap: pretty;
+}
+
+/* 段首小标题（03 节的三处并列）：17px / 600，上 28 下 8 */
+.article-body h3 {
+  margin: 28px 0 8px;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0;
+  color: var(--color-text);
+}
+
+.article-body a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+}
+
+/* 尾句：一条细线隔开，衬线尾句 + 弱化收束 */
+.article-signoff {
+  margin: 56px 0 0;
+  padding: 32px 0 0;
+  border-top: 1px solid var(--color-border);
+}
+.article-body .article-signoff-line {
+  margin: 0 0 14px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  font-synthesis: none;
+}
+.article-body .article-signoff-end {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+/* 文末卡片（对应 sitor 的 invite card 位置） */
+.article-invite {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 56px 24px 88px;
+}
+.article-invite-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 20px 24px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  transition: border-color 0.2s ease-out, background-color 0.3s ease;
+}
+.article-invite-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 768px) {
+  .article-page { padding-top: 40px; }
+  .article-back { margin-bottom: 28px; }
+  .article-title { font-size: 26px; margin-bottom: 32px; }
+  .article-deck { font-size: 17px; margin-bottom: 32px; }
+  .article-body p { font-size: 15px; line-height: 1.75; }
+  .article-body h2 { font-size: 20px; margin: 36px 0 12px; }
+  .article-body h3 { font-size: 16px; margin: 24px 0 8px; }
+  .article-signoff { margin-top: 44px; padding-top: 28px; }
+  .article-body .article-signoff-line { font-size: 20px; }
+  .article-invite { padding: 40px 24px 64px; }
+  .article-invite-card { padding: 18px 20px; }
+}
+
+@media (max-width: 480px) {
+  .article-shell { padding: 0 20px; }
+  .article-invite { padding: 36px 20px 56px; }
+  .article-title { font-size: 26px; }
+}
