@@ -45,6 +45,10 @@
      统一走变量，避免“上一块 padding-bottom + 下一块 padding-top”两个大数相加。 */
   --space-section: 90px;
   --space-hero-bottom: 90px;
+
+  /* 仅 About → Projects 这一处边界额外加的一点空气（单侧值，两块各加一次，
+     合计 +40px）；其余区块间距保持 --space-section 不变。 */
+  --space-about-projects: 20px;
 }
 
 /* ---------- 设计变量（暗色） ---------- */
@@ -330,7 +334,14 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   justify-content: center;
   min-height: calc(100vh - var(--header-h));
   min-height: calc(100svh - var(--header-h));
-  padding: 72px 24px clamp(24px, 4vh, var(--space-hero-bottom));
+  /* 首屏内容整体上移一点：居中的 flex 里，底部内边距多加 2×--hero-lift，
+     内容中心就上移 --hero-lift（顶部留白缩小、底部留白等量增加）。
+     min-height 与 hero 高度都不变，只是内容位置变化，因此不会溢出。 */
+  --hero-top: 72px;
+  --hero-x: 24px;
+  --hero-lift: clamp(16px, 3vh, 32px);
+  --hero-bottom: clamp(24px, 4vh, var(--space-hero-bottom));
+  padding: var(--hero-top) var(--hero-x) calc(var(--hero-bottom) + var(--hero-lift) * 2);
 }
 .hero-inner {
   max-width: 680px;
@@ -339,7 +350,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .hero-logo {
   display: block;
-  width: 96px;
+  width: 116px;
   height: auto;
   margin: 0 auto 24px;
 }
@@ -431,6 +442,10 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 
 /* ---------- 区块通用 ---------- */
 .section { padding: var(--space-section) 24px; }
+/* 只给 About 与 Projects 之间的这条边界多一点空气（各加一半），
+   其余区块之间仍严格等于 2 × --space-section。 */
+#about { padding-bottom: calc(var(--space-section) + var(--space-about-projects)); }
+#projects { padding-top: calc(var(--space-section) + var(--space-about-projects)); }
 /* 末尾元素的 margin 不算内容，避免它叠加到区块间距上（改前 about 底部多出 20px） */
 .section-inner > :last-child,
 .about-body > :last-child { margin-bottom: 0; }
@@ -657,7 +672,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 768px) {
-  :root { --header-h: 56px; --space-section: 70px; --space-hero-bottom: 70px; }
+  :root { --header-h: 56px; --space-section: 70px; --space-hero-bottom: 70px; --space-about-projects: 14px; }
 
   .header-inner {
     grid-template-columns: auto 1fr;
@@ -702,7 +717,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .nav-toggle { display: inline-flex; }
   .header-cta { display: none; }
 
-  .hero { padding: 56px 24px clamp(24px, 4vh, var(--space-hero-bottom)); }
+  .hero { --hero-top: 56px; }
   .section { padding: var(--space-section) 24px; }
   .section-head { margin-bottom: 32px; }
   .projects-grid { grid-template-columns: 1fr; }
@@ -723,9 +738,9 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 480px) {
-  :root { --space-section: 56px; --space-hero-bottom: 56px; }
-  .hero { padding: 40px 16px clamp(24px, 3.5vh, var(--space-hero-bottom)); }
-  .hero-logo { width: 64px; margin-bottom: 20px; }
+  :root { --space-section: 56px; --space-hero-bottom: 56px; --space-about-projects: 10px; }
+  .hero { --hero-top: 40px; --hero-x: 16px; --hero-bottom: clamp(24px, 3.5vh, var(--space-hero-bottom)); }
+  .hero-logo { width: 70px; margin-bottom: 20px; }
   .brand { gap: 8px; }
   .brand-mark { width: 26px; height: 26px; }
   .hero-actions { flex-direction: column; }
@@ -738,7 +753,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
    hero 回到内容高度，免得矮屏只看到半个首屏。min-height 本身不裁切内容
    （盒子会长高而不是溢出），这里只是不让矮屏被一屏占满。 */
 @media (max-height: 640px) {
-  .hero { min-height: auto; }
+  /* 高度自适应时居中不再生效，上移量没有意义，一并归零 */
+  .hero { min-height: auto; --hero-lift: 0px; }
 }
 
 /* ---------- 动效降级 ---------- */
