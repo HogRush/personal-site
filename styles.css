@@ -877,13 +877,11 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   text-decoration: none;
   transition: color 0.15s ease-out;
 }
+/* 卡片标题：hover 只变颜色，不加下划线（整卡上浮 + 阴影已提供反馈） */
 .blog-card-link:hover,
 .blog-card-link:focus-visible {
   color: var(--hero-ink);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--color-accent);
+  text-decoration: none;
 }
 .blog-card-link[aria-disabled="true"] { cursor: default; }
 
