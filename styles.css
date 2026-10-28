@@ -39,6 +39,11 @@
 
   --header-h: 72px;
   --content-w: 1080px;
+
+  /* 区块垂直节奏：区块上下内边距，相邻两块合计 = 96px（改前是 120+120=240）。
+     统一走变量，避免“上一块 padding-bottom + 下一块 padding-top”两个大数相加。 */
+  --space-section: 48px;
+  --space-hero-bottom: 48px;
 }
 
 /* ---------- 设计变量（暗色） ---------- */
@@ -309,11 +314,13 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 .nav-toggle[aria-expanded="true"] .icon-menu { display: none; }
 
 /* ---------- Hero ---------- */
+/* 不再强制撑满 viewport：100vh 的 min-height 会把剩余空间分给内容上下两侧，
+   使按钮到「关于」的实际留白远大于 padding 之和（改前实测 365px）。
+   高度交给内容 + padding 决定，区块间距因此可被精确控制。 */
 .hero {
-  min-height: calc(100vh - var(--header-h));
   display: flex;
   align-items: center;
-  padding: 72px 24px 96px;
+  padding: 72px 24px var(--space-hero-bottom);
 }
 .hero-inner {
   max-width: 680px;
@@ -413,7 +420,10 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 .hero-inner .reveal:nth-child(5) { transition-delay: 0.26s; }
 
 /* ---------- 区块通用 ---------- */
-.section { padding: 120px 24px; }
+.section { padding: var(--space-section) 24px; }
+/* 末尾元素的 margin 不算内容，避免它叠加到区块间距上（改前 about 底部多出 20px） */
+.section-inner > :last-child,
+.about-body > :last-child { margin-bottom: 0; }
 .section-inner { max-width: var(--content-w); margin: 0 auto; }
 .section-inner--narrow { max-width: 680px; }
 .section-head { margin: 0 0 44px; }
@@ -633,11 +643,11 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 /* ---------- 响应式 ---------- */
 @media (max-width: 1100px) {
   .site-nav { gap: 20px; }
-  .section { padding: 104px 24px; }
+  .section { padding: 44px 24px; }
 }
 
 @media (max-width: 768px) {
-  :root { --header-h: 56px; }
+  :root { --header-h: 56px; --space-section: 40px; --space-hero-bottom: 40px; }
 
   .header-inner {
     grid-template-columns: auto 1fr;
@@ -682,8 +692,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .nav-toggle { display: inline-flex; }
   .header-cta { display: none; }
 
-  .hero { padding: 56px 24px 72px; }
-  .section { padding: 80px 24px; }
+  .hero { padding: 56px 24px var(--space-hero-bottom); }
+  .section { padding: var(--space-section) 24px; }
   .section-head { margin-bottom: 32px; }
   .projects-grid { grid-template-columns: 1fr; }
   .card { padding: 24px; }
@@ -703,13 +713,14 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 480px) {
-  .hero { padding: 48px 16px 64px; }
+  :root { --space-section: 32px; --space-hero-bottom: 32px; }
+  .hero { padding: 40px 16px var(--space-hero-bottom); }
   .hero-logo { width: 64px; margin-bottom: 20px; }
   .brand { gap: 8px; }
   .brand-mark { width: 26px; height: 26px; }
   .hero-actions { flex-direction: column; }
   .hero-actions .btn { width: 100%; max-width: 280px; }
-  .section { padding: 56px 16px; }
+  .section { padding: var(--space-section) 16px; }
   .card { padding: 20px; }
 }
 
@@ -731,7 +742,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 
 /* 页首：居中的衬线斜体大标题 + 一行副文（sitor：80/32 内边距、36px/1.3） */
 .blog-hero {
-  padding: 80px 24px 32px;
+  padding: 64px 24px 28px;
   text-align: center;
 }
 .blog-hero-title {
@@ -753,7 +764,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 /* 列表：单列 720px，卡间距 20px（sitor：max-width 720 / gap 20 / 上 32 下 80） */
-.blog-list-section { padding: 32px 24px 96px; }
+.blog-list-section { padding: 28px 24px 72px; }
 .blog-list {
   list-style: none;
   margin: 0 auto;
@@ -910,8 +921,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 768px) {
-  .blog-hero { padding: 56px 24px 24px; }
-  .blog-list-section { padding: 24px 24px 72px; }
+  .blog-hero { padding: 48px 24px 20px; }
+  .blog-list-section { padding: 20px 24px 56px; }
   .blog-card { padding: 24px; }
   .blog-card-title { font-size: 18px; }
   /* 移动端下拉菜单里，当前页用底色标识（下划线在竖向列表里不合适） */
@@ -921,8 +932,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 480px) {
-  .blog-hero { padding: 48px 16px 20px; }
-  .blog-list-section { padding: 20px 16px 64px; }
+  .blog-hero { padding: 40px 16px 16px; }
+  .blog-list-section { padding: 16px 16px 48px; }
   .blog-card { padding: 20px; }
   .blog-list { gap: 16px; }
 }
@@ -933,7 +944,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
    720 容器 / 672 正文、16px·1.75 正文、22px h2、上游 64 下游 80；
    颜色与字体走本站三态主题变量）
    ============================================================ */
-.article-page { padding: 64px 0 0; min-height: calc(100vh - var(--header-h)); }
+.article-page { padding: 48px 0 0; min-height: calc(100vh - var(--header-h)); }
 
 .article { display: block; }
 
@@ -1078,7 +1089,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 .article-invite {
   max-width: 720px;
   margin: 0 auto;
-  padding: 56px 24px 88px;
+  padding: 40px 24px 64px;
 }
 .article-invite-card {
   display: flex;
@@ -1100,7 +1111,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 768px) {
-  .article-page { padding-top: 40px; }
+  .article-page { padding-top: 32px; }
   .article-back { margin-bottom: 28px; }
   .article-title { font-size: 26px; margin-bottom: 32px; }
   .article-deck { font-size: 17px; margin-bottom: 32px; }
@@ -1109,13 +1120,13 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .article-body h3 { font-size: 16px; margin: 24px 0 8px; }
   .article-signoff { margin-top: 44px; padding-top: 28px; }
   .article-body .article-signoff-line { font-size: 20px; }
-  .article-invite { padding: 40px 24px 64px; }
+  .article-invite { padding: 32px 24px 52px; }
   .article-invite-card { padding: 18px 20px; }
 }
 
 @media (max-width: 480px) {
   .article-shell { padding: 0 20px; }
-  .article-invite { padding: 36px 20px 56px; }
+  .article-invite { padding: 28px 20px 48px; }
   .article-title { font-size: 26px; }
 }
 
@@ -1270,14 +1281,14 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 /* 页尾来信：复用文章页的 invite 卡片，去掉与列表重复的上边距 */
-.work-invite { padding: 24px 24px 96px; }
+.work-invite { padding: 20px 24px 72px; }
 
 @media (max-width: 768px) {
   .work-hero { padding-bottom: 4px; }
   .work-list-section { padding: 24px 24px 32px; }
   .work-card { padding: 24px; }
   .work-card .card-title { font-size: 18px; }
-  .work-invite { padding: 20px 24px 64px; }
+  .work-invite { padding: 16px 24px 52px; }
 }
 
 @media (max-width: 480px) {
@@ -1287,7 +1298,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   /* 窄屏：字段标签折到正文上方 */
   .work-fact { grid-template-columns: 1fr; gap: 4px; }
   .work-fact-label { padding-top: 0; }
-  .work-invite { padding: 16px 16px 56px; }
+  .work-invite { padding: 12px 16px 48px; }
 }
 
 /* ---------- 首页「工作项目」卡：已上线，整卡可点 ---------- */
