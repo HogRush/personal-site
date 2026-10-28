@@ -315,16 +315,22 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 .nav-toggle[aria-expanded="true"] .icon-menu { display: none; }
 
 /* ---------- Hero ---------- */
-/* 不再强制撑满 viewport：100vh 的 min-height 会把剩余空间分给内容上下两侧，
-   使按钮到「关于」的实际留白远大于 padding 之和（改前实测 365px）。
-   高度交给内容 + padding 决定，区块间距因此可被精确控制。 */
+/* 首屏 = 恰好一整屏：页头（sticky，仍占文档流 72px）+ hero = 100svh，
+   于是下一个区块的 kicker 永远从吞口线以下开始，不再随屏幕高度"露出一点"。
+   svh 处理移动端地址栏伸缩，旧浏览器回退到 vh（同一条 calc 写两次）。
+   注意：一旦有了 min-height，多出来的高度必须由 flex 居中分配，
+   而不是旧写法 align-items:center 的"上下各分一半"——
+   那样 640px 的 min-height 就把「按钮 → 关于」从 180 顶到 224。
+   现在内容在 padding 盒内整体居中（justify-content:center），
+   padding-bottom 用 clamp 压小，额外空白只出现一次（居中，上下对称），
+   因此间距由视口高度决定，而不是靠一个碰运气的魔数。 */
 .hero {
   display: flex;
-  align-items: center;
-  padding: 72px 24px var(--space-hero-bottom);
-  /* 注意：这里不加 min-height。align-items:center 会把多出来的高度平分到内容上下两侧，
-     实测 min-height:640 会把 按钮→「关于」的间距从 180 顶到 224（要求上限 200），
-     所以首屏高度仍由内容 + padding 决定。 */
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
+  padding: 72px 24px clamp(24px, 4vh, var(--space-hero-bottom));
 }
 .hero-inner {
   max-width: 680px;
@@ -696,7 +702,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .nav-toggle { display: inline-flex; }
   .header-cta { display: none; }
 
-  .hero { padding: 56px 24px var(--space-hero-bottom); }
+  .hero { padding: 56px 24px clamp(24px, 4vh, var(--space-hero-bottom)); }
   .section { padding: var(--space-section) 24px; }
   .section-head { margin-bottom: 32px; }
   .projects-grid { grid-template-columns: 1fr; }
@@ -718,7 +724,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 
 @media (max-width: 480px) {
   :root { --space-section: 56px; --space-hero-bottom: 56px; }
-  .hero { padding: 40px 16px var(--space-hero-bottom); }
+  .hero { padding: 40px 16px clamp(24px, 3.5vh, var(--space-hero-bottom)); }
   .hero-logo { width: 64px; margin-bottom: 20px; }
   .brand { gap: 8px; }
   .brand-mark { width: 26px; height: 26px; }
@@ -726,6 +732,13 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .hero-actions .btn { width: 100%; max-width: 280px; }
   .section { padding: var(--space-section) 16px; }
   .card { padding: 20px; }
+}
+
+/* 矮屏保护：视口高度 < 640px（横屏手机、小窗口）时撤掉满屏，
+   hero 回到内容高度，免得矮屏只看到半个首屏。min-height 本身不裁切内容
+   （盒子会长高而不是溢出），这里只是不让矮屏被一屏占满。 */
+@media (max-height: 640px) {
+  .hero { min-height: auto; }
 }
 
 /* ---------- 动效降级 ---------- */
