@@ -40,10 +40,11 @@
   --header-h: 72px;
   --content-w: 1080px;
 
-  /* 区块垂直节奏：区块上下内边距，相邻两块合计 = 96px（改前是 120+120=240）。
+  /* 区块垂直节奏：区块上下内边距，相邻两块合计 = 180px（≈ 原 240px 的 75%，
+     比上一版 96px 松一些；hero→关于 由 72 + 90 组成）。
      统一走变量，避免“上一块 padding-bottom + 下一块 padding-top”两个大数相加。 */
-  --space-section: 48px;
-  --space-hero-bottom: 48px;
+  --space-section: 90px;
+  --space-hero-bottom: 90px;
 }
 
 /* ---------- 设计变量（暗色） ---------- */
@@ -321,6 +322,9 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   display: flex;
   align-items: center;
   padding: 72px 24px var(--space-hero-bottom);
+  /* 注意：这里不加 min-height。align-items:center 会把多出来的高度平分到内容上下两侧，
+     实测 min-height:640 会把 按钮→「关于」的间距从 180 顶到 224（要求上限 200），
+     所以首屏高度仍由内容 + padding 决定。 */
 }
 .hero-inner {
   max-width: 680px;
@@ -643,11 +647,11 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 /* ---------- 响应式 ---------- */
 @media (max-width: 1100px) {
   .site-nav { gap: 20px; }
-  .section { padding: 44px 24px; }
+  .section { padding: var(--space-section) 24px; }
 }
 
 @media (max-width: 768px) {
-  :root { --header-h: 56px; --space-section: 40px; --space-hero-bottom: 40px; }
+  :root { --header-h: 56px; --space-section: 70px; --space-hero-bottom: 70px; }
 
   .header-inner {
     grid-template-columns: auto 1fr;
@@ -713,7 +717,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 
 @media (max-width: 480px) {
-  :root { --space-section: 32px; --space-hero-bottom: 32px; }
+  :root { --space-section: 56px; --space-hero-bottom: 56px; }
   .hero { padding: 40px 16px var(--space-hero-bottom); }
   .hero-logo { width: 64px; margin-bottom: 20px; }
   .brand { gap: 8px; }
