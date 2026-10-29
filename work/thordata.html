@@ -293,15 +293,6 @@
                         <span class="cs-doc-tbtn-t">缩略图</span>
                       </button>
                     </div>
-                    <div class="cs-doc-nav">
-                      <button class="cs-doc-pgbtn" type="button" id="ev-sop-prev" aria-label="上一页" title="上一页">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
-                      </button>
-                      <span class="cs-doc-count" id="ev-sop-count" aria-live="polite" aria-atomic="true">1 / 12</span>
-                      <button class="cs-doc-pgbtn" type="button" id="ev-sop-next" aria-label="下一页" title="下一页">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
-                      </button>
-                    </div>
                     <div class="cs-doc-rbar-r">
                       <button class="cs-doc-tbtn" type="button" id="ev-sop-zoom" title="放大查看">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.6-3.6M11 8v6M8 11h6" /></svg>
@@ -320,10 +311,16 @@
                         <canvas id="ev-sop-c2" aria-hidden="true"></canvas>
                       </div>
                       <p class="cs-doc-load" id="ev-sop-load" hidden>载入中…</p>
+                      <button class="cs-doc-snav is-prev" type="button" id="ev-sop-prev" aria-label="上一页" title="上一页">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+                      </button>
+                      <button class="cs-doc-snav is-next" type="button" id="ev-sop-next" aria-label="下一页" title="下一页">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                      </button>
                     </div>
                   </div>
 
-                  <div class="cs-doc-foot"><span id="ev-sop-foot">1 / 12</span></div>
+                  <div class="cs-doc-foot"><span id="ev-sop-foot" aria-live="polite" aria-atomic="true">1 / 12</span></div>
                   <div class="cs-doc-toast" id="ev-sop-toast" role="status" aria-live="polite"></div>
                 </div>
               </div>
@@ -1113,7 +1110,6 @@
       var cvA = document.getElementById('ev-sop-c1');
       var cvB = document.getElementById('ev-sop-c2');
       var loadEl = document.getElementById('ev-sop-load');
-      var countEl = document.getElementById('ev-sop-count');
       var footEl = document.getElementById('ev-sop-foot');
       var prevBtn = document.getElementById('ev-sop-prev');
       var nextBtn = document.getElementById('ev-sop-next');
@@ -1193,7 +1189,6 @@
 
       function paintChrome(n) {
         var label = n + ' / ' + TOTAL;
-        countEl.textContent = label;
         footEl.textContent = label;
         fsCount.textContent = label;
         if (fsOpen) fsInput.value = String(n);
@@ -1245,8 +1240,11 @@
           if (my !== seq) return;
           var base = page.getViewport({ scale: 1 });
           var aspect = base.height / base.width;
-          var w = Math.max(100, stage.clientWidth - 64);
-          var h = Math.max(100, stage.clientHeight - 48);
+          var pcs = getComputedStyle(stage);
+          var padX = (parseFloat(pcs.paddingLeft) || 0) + (parseFloat(pcs.paddingRight) || 0);
+          var padY = (parseFloat(pcs.paddingTop) || 0) + (parseFloat(pcs.paddingBottom) || 0);
+          var w = Math.max(100, stage.clientWidth - padX);
+          var h = Math.max(100, stage.clientHeight - padY);
           var cssW = Math.floor(Math.max(80, Math.min(w, h / aspect, 760)));
           cvBox.style.width = cssW + 'px';
           cvBox.style.height = Math.round(cssW * aspect) + 'px';

@@ -2804,47 +2804,37 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
 }
 .cs-doc-tbtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
-.cs-doc-nav {
+/* 翻页箭头：置于阅读区左右两侧，垂直居中，固定不随切页移动 */
+.cs-doc-snav {
   position: absolute;
-  left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.cs-doc-pgbtn {
+  z-index: 4;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   padding: 0;
+  transform: translateY(-50%);
   color: var(--color-text-secondary);
-  background-color: var(--color-bg);
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: background-color 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out, opacity 0.15s ease-out;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out, transform 0.15s ease-out, opacity 0.15s ease-out;
 }
-.cs-doc-pgbtn svg { width: 15px; height: 15px; }
-.cs-doc-pgbtn:hover:not(:disabled) {
-  color: var(--color-text);
-  background-color: var(--color-primary-soft);
-  border-color: var(--color-border-hover);
+.cs-doc-snav.is-prev { left: 16px; }
+.cs-doc-snav.is-next { right: 16px; }
+.cs-doc-snav svg { width: 20px; height: 20px; flex: none; }
+.cs-doc-snav:hover:not(:disabled) {
+  color: var(--hero-ink);
+  border-color: var(--color-accent);
+  transform: translateY(calc(-50% - 1px));
 }
-.cs-doc-pgbtn:disabled { opacity: 0.3; cursor: default; }
-.cs-doc-pgbtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-.cs-doc-count {
-  min-width: 62px;
-  text-align: center;
-  font-family: var(--font-metric);
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text);
-  white-space: nowrap;
-}
+.cs-doc-snav:active:not(:disabled) { transform: translateY(calc(-50% + 1px)); }
+.cs-doc-snav:disabled { opacity: 0.35; cursor: default; }
+.cs-doc-snav:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 
 /* 阅读区：固定高度，浅灰底 */
 .cs-doc-stagewrap { flex: none; display: flex; height: 62vh; min-height: 0; }
@@ -2899,7 +2889,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 32px;
+  padding: 24px 64px;
   overflow: auto;
   background-color: color-mix(in srgb, var(--color-text) 4%, var(--color-bg));
 }
@@ -3167,6 +3157,10 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 
 @media (max-width: 900px) {
   .cs-doc-stagewrap { flex-direction: column-reverse; height: 56vh; }
+  .cs-doc-stage { padding: 20px 56px; }
+  .cs-doc-snav { width: 40px; height: 40px; }
+  .cs-doc-snav.is-prev { left: 12px; }
+  .cs-doc-snav.is-next { right: 12px; }
   .cs-doc-rail { width: auto; height: 0; border-right: 0; border-top: 1px solid transparent; transition: height 200ms ease-out; }
   .cs-doc-rail.is-on { width: auto; height: 120px; border-right: 0; border-top-color: var(--color-border); }
   .cs-doc-rail-in {
@@ -3196,6 +3190,15 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
     padding: 16px;
   }
   .cs-doc-stagewrap { height: 52vh; }
+  .cs-doc-stage { padding: 14px 34px; }
+  .cs-doc-snav {
+    width: 36px;
+    height: 36px;
+    background-color: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  }
+  .cs-doc-snav.is-prev { left: 4px; }
+  .cs-doc-snav.is-next { right: 4px; }
+  .cs-doc-snav svg { width: 17px; height: 17px; }
   .cs-doc-t { padding-right: 0; flex-wrap: wrap; row-gap: 4px; }
   .cs-doc-badge { top: 12px; right: 14px; }
   .cs-doc-actions { gap: 10px 14px; }
