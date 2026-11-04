@@ -23,6 +23,8 @@
   /* 首屏 H1 专用墨色：与 sitor #E0B88A 同色相(H32)/同饱和(S58%)，仅压明度到 35%，
      对纸底 #f5f5f0 对比度 5.15:1（sitor 原色在纸底仅 1.69:1，不可读） */
   --hero-ink: #8d5d25;
+  /* 阅读区底色：浅色用暖灰 #F2F0EC，暗色在 html.dark 里给等价层次 */
+  --doc-view-bg: #f2f0ec;
 
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -70,6 +72,7 @@ html.dark {
   --color-accent-soft: #2a2118;
   /* 深色下直接用 sitor 实测强调色，对 #0c0a09 对比度 10.72:1 */
   --hero-ink: #e0b88a;
+  --doc-view-bg: #171412;
 
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.45);
@@ -2466,47 +2469,43 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 }
 
 /* ============================================================
-   03 · 文档卡 + 原位固定高度阅读器（集群产品内容流程文档）
-   默认形态是一张卡（整张卡只加载一张封面图）；点击后在卡片原位
-   展开固定高度阅读器，页面图由 IntersectionObserver 按需加载。
-   页数变化只改变阅读器里的页节点，不改变卡片数量。
+   03 · 文档卡（集群产品内容流程文档）
+   紧凑态 → 单卡片内切换的双栏阅读态：顶部只有一个标题区，
+   左 300px 证据锚点栏 + 右 pdf.js 阅读器（fit-width / 固定高度 /
+   视口内滚动 / 只渲染当前页与相邻页）。
    ============================================================ */
+
+/* ---------- 卡片外壳 ---------- */
 .cs-doc-card {
   position: relative;
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  grid-template-areas:
-    "cover body"
-    "reader reader";
-  column-gap: 20px;
   margin: 16px 0 18px;
-  padding: 18px 20px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+  transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out;
 }
-.cs-doc-card:hover { box-shadow: var(--shadow-md); }
 .cs-doc-card:hover,
 .cs-doc-card.is-open { border-color: color-mix(in srgb, var(--color-accent) 20%, var(--color-border)); }
+.cs-doc-card.is-open { box-shadow: var(--shadow-md); }
 
-/* 整卡命中区：一张覆盖层按钮，Tab 可达、Enter 展开；卡内按钮/链接抬高一层 */
-.cs-doc-hit {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  font: inherit;
-  background: none;
-  border: 0;
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
+/* 展开后横向撑到 1120（窄屏留 96 边距），并居中于视口：
+   li 左缘到视口中心的水平距离恒为 360px = 860(wrap)/2 − 24(step padding) − 46(evset margin)，
+   在 wrap 以 860 上限居中的所有宽度下精确成立；<900 由媒体查询接管 */
+.cs-doc-card.is-open {
+  width: min(1120px, calc(100vw - 96px));
+  margin-left: calc(360px - min(1120px, calc(100vw - 96px)) / 2);
 }
-.cs-doc-hit:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 3px; }
+
+/* ---------- 紧凑态 ---------- */
+.cs-doc-sum {
+  position: relative;
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  column-gap: 20px;
+  padding: 18px 20px;
+  cursor: pointer;
+}
+.cs-doc-sum[hidden] { display: none; }
 
 .cs-doc-badge {
   position: absolute;
@@ -2526,7 +2525,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 }
 
 .cs-doc-cover {
-  grid-area: cover;
+  grid-area: auto;
   position: relative;
   z-index: 2;
   display: flex;
@@ -2556,13 +2555,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   color: var(--color-text-muted);
 }
 
-.cs-doc-body {
-  grid-area: body;
-  position: relative;
-  z-index: 2;
-  min-width: 0;
-  pointer-events: none;      /* 文字不吃点击，让整卡命中区生效 */
-}
+.cs-doc-body { position: relative; z-index: 2; min-width: 0; }
 .cs-doc-t {
   display: flex;
   align-items: center;
@@ -2616,7 +2609,6 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   align-items: center;
   gap: 8px;
   margin: 12px 0 0;
-  pointer-events: auto;      /* 锚点单独可点 */
 }
 .cs-doc-anchor {
   display: inline-flex;
@@ -2648,7 +2640,6 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   flex-wrap: wrap;
   gap: 8px 16px;
   margin: 16px 0 0;
-  pointer-events: auto;      /* 按钮与下载链接单独可点 */
 }
 .cs-doc-primary {
   display: inline-flex;
@@ -2666,7 +2657,8 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   cursor: pointer;
   transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
 }
-.cs-doc-primary svg { width: 13px; height: 13px; }
+.cs-doc-primary svg { width: 13px; height: 13px; transition: transform 0.18s ease-out; }
+.cs-doc-primary[aria-expanded="true"] svg { transform: rotate(180deg); }
 .cs-doc-primary:hover { background-color: var(--color-accent-hover); border-color: var(--color-accent-hover); }
 .cs-doc-primary:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 .cs-doc-dl {
@@ -2675,290 +2667,537 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   text-decoration: none;
   border-bottom: 1px solid var(--color-border-hover);
   padding-bottom: 1px;
-  transition: color 0.15s ease-out, border-color 0.15s ease-out;
+  transition: color 0.15s ease-out, border-bottom-color 0.15s ease-out;
 }
 .cs-doc-dl:hover { color: var(--color-text); border-bottom-color: currentColor; }
 .cs-doc-dl:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 
-/* ---------- 阅读器：原位展开，固定高度，单页左右切页（无纵向滚动、无进度条） ---------- */
-.cs-doc-reader {
-  grid-area: reader;
-  scroll-margin-top: calc(var(--header-h) + 12px);
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  margin-top: 16px;
-  overflow: hidden;
-  background-color: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  transform-origin: 50% 0;
-}
-.cs-doc-reader[hidden] { display: none; }
-.cs-doc-reader:focus,
-.cs-doc-reader:focus-visible { outline: none; }
-.cs-doc-reader.is-in { animation: cs-doc-grow 220ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-@keyframes cs-doc-grow {
-  from { opacity: 0; transform: scaleY(0.9); }
-  to { opacity: 1; transform: scaleY(1); }
-}
+/* ---------- 展开态 ---------- */
+.cs-doc-exp { display: flex; flex-direction: column; min-width: 0; }
+.cs-doc-exp[hidden] { display: none; }
 
-/* 头部：文档名 + 页数 + 全屏 / 收起 */
-.cs-doc-rhead {
+/* 顶部唯一标题区：88px，底部 1px 分割线 */
+.cs-doc-head {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 9px;
-  height: 52px;
-  padding: 0 8px 0 16px;
-  background-color: var(--color-surface);
+  gap: 14px;
+  height: 88px;
+  padding: 0 28px;
   border-bottom: 1px solid var(--color-border);
 }
-.cs-doc-ric {
+.cs-doc-ic {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   color: var(--hero-ink);
   background-color: var(--color-accent-soft);
-  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
-  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 28%, transparent);
+  border-radius: 10px;
 }
-.cs-doc-ric svg { width: 13px; height: 13px; }
-.cs-doc-rname {
+.cs-doc-ic svg { width: 18px; height: 18px; }
+.cs-doc-ht { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.cs-doc-ht-top { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+.cs-doc-name {
   min-width: 0;
-  font-size: 13.5px;
-  letter-spacing: 0.01em;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: 0.005em;
   color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.cs-doc-rmeta {
+.cs-doc-ht-meta {
   flex: none;
   font-family: var(--font-metric);
-  font-size: 11.5px;
+  font-size: 13px;
   letter-spacing: 0.02em;
   color: var(--color-text-muted);
   white-space: nowrap;
 }
-.cs-doc-rhead-act { display: flex; align-items: center; gap: 2px; margin-left: auto; flex: none; }
-.cs-doc-ibtn {
+.cs-doc-ht-sub {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-doc-head-r { display: flex; align-items: center; gap: 12px; margin-left: auto; flex: none; }
+.cs-doc-pill {
+  padding: 4px 11px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--hero-ink);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+.cs-doc-collapse {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 12px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+.cs-doc-collapse svg { width: 13px; height: 13px; flex: none; }
+.cs-doc-collapse:hover {
+  color: var(--hero-ink);
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  background-color: var(--color-accent-soft);
+}
+.cs-doc-collapse:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+/* 双栏主体 */
+.cs-doc-main { display: flex; align-items: stretch; min-width: 0; }
+
+/* 左栏：固定 300px */
+.cs-doc-side {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  padding: 24px 24px 28px;
+  border-right: 1px solid var(--color-border);
+}
+.cs-doc-side-t {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.005em;
+  color: var(--color-text);
+}
+.cs-doc-side-p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+}
+.cs-doc-hr {
+  display: block;
+  height: 1px;
+  margin: 20px 0;
+  background-color: var(--color-border);
+}
+.cs-doc-side-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.cs-doc-side-row span:last-child {
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* 证据卡片 */
+.cs-doc-evs { display: flex; flex-direction: column; gap: 10px; }
+.cs-doc-ev {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 14px 16px;
+  font: inherit;
+  text-align: left;
+  color: var(--color-text);
+  background-color: color-mix(in srgb, var(--color-bg) 55%, var(--color-surface));
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease-out, background-color 0.15s ease-out,
+    transform 0.15s ease-out, box-shadow 0.15s ease-out;
+}
+.cs-doc-ev:hover {
+  border-color: var(--color-border-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.cs-doc-ev.is-on {
+  background-color: var(--color-accent-soft);
+  border-color: color-mix(in srgb, var(--color-accent) 62%, var(--color-border));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent) 32%, transparent);
+}
+.cs-doc-ev:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; transform: none; }
+.cs-doc-ev-top {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  font: inherit;
-  color: var(--color-text-muted);
-  background: none;
-  border: 0;
-  border-radius: 8px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.15s ease-out, color 0.15s ease-out;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
 }
-.cs-doc-ibtn svg { width: 15px; height: 15px; }
-.cs-doc-ibtn:hover { background-color: var(--color-primary-soft); color: var(--color-text); }
-.cs-doc-ibtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
+.cs-doc-ev-p {
+  font-family: var(--font-metric);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+.cs-doc-ev-st {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.cs-doc-ev.is-on .cs-doc-ev-st { color: var(--hero-ink); font-weight: 500; }
+.cs-doc-ev.is-on .cs-doc-ev-st::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+}
+.cs-doc-ev-t {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+.cs-doc-ev-d {
+  display: block;
+  margin-top: 4px;
+  padding-right: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.cs-doc-ev-go {
+  position: absolute;
+  right: 12px;
+  bottom: 11px;
+  width: 12px;
+  height: 12px;
+  color: var(--color-text-muted);
+  opacity: 0.75;
+  transition: color 0.15s ease-out, opacity 0.15s ease-out;
+}
+.cs-doc-ev:hover .cs-doc-ev-go,
+.cs-doc-ev.is-on .cs-doc-ev-go { color: var(--hero-ink); opacity: 1; }
 
-/* 工具条：左缩略图 / 中页码 / 右放大 */
-.cs-doc-rbar {
-  position: relative;
-  z-index: 3;
+.cs-doc-side-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+.cs-doc-side-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: auto;
+  padding-top: 22px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.cs-doc-side-dl {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease-out;
+}
+.cs-doc-side-dl svg { width: 13px; height: 13px; flex: none; }
+.cs-doc-side-dl:hover { color: var(--hero-ink); }
+.cs-doc-side-dl:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+/* 右栏 */
+.cs-doc-main-r { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* 工具栏 48px */
+.cs-doc-tools {
   flex: none;
   display: flex;
   align-items: center;
   height: 48px;
-  padding: 0 8px;
-  background-color: var(--color-surface);
+  padding: 0 16px;
   border-bottom: 1px solid var(--color-border);
 }
-.cs-doc-rbar-l,
-.cs-doc-rbar-r { display: flex; align-items: center; flex: 1; min-width: 0; }
-.cs-doc-rbar-r { justify-content: flex-end; }
-.cs-doc-tbtn {
-  display: inline-flex;
+.cs-doc-tools-l {
+  display: flex;
   align-items: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 10px;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.cs-doc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+}
+.cs-doc-tools-r {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  min-width: 0;
+}
+.cs-doc-pgbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--color-text-secondary);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  cursor: pointer;
+  transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out;
+}
+.cs-doc-pgbtn svg { width: 14px; height: 14px; }
+.cs-doc-pgbtn:hover:not(:disabled) {
+  color: var(--hero-ink);
+  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+  background-color: var(--color-accent-soft);
+}
+.cs-doc-pgbtn:disabled { opacity: 0.35; cursor: default; }
+.cs-doc-pgbtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+.cs-doc-pgn {
+  flex: none;
+  min-width: 46px;
+  text-align: center;
+  font-family: var(--font-metric);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+.cs-doc-pgn b { font-weight: 500; color: var(--color-text); }
+.cs-doc-fit {
+  flex: none;
+  height: 26px;
+  padding: 0 8px;
   font: inherit;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--color-text-secondary);
   background: none;
   border: 1px solid transparent;
-  border-radius: var(--radius-full);
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.15s ease-out, color 0.15s ease-out, border-color 0.15s ease-out;
+  white-space: nowrap;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out, border-color 0.15s ease-out;
 }
-.cs-doc-tbtn svg { width: 14px; height: 14px; flex: none; }
-.cs-doc-tbtn:hover { background-color: var(--color-primary-soft); color: var(--color-text); }
-.cs-doc-tbtn[aria-pressed="true"] {
+.cs-doc-fit:hover { color: var(--color-text); background-color: var(--color-primary-soft); }
+.cs-doc-fit[aria-pressed="true"] {
   color: var(--hero-ink);
   background-color: var(--color-accent-soft);
-  border-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
 }
-.cs-doc-tbtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
-/* 翻页箭头：置于阅读区左右两侧，垂直居中，固定不随切页移动 */
-.cs-doc-snav {
-  position: absolute;
-  top: 50%;
-  z-index: 4;
+.cs-doc-fit:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+.cs-doc-zoom {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 26px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+}
+.cs-doc-zoom button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 24px;
+  height: 100%;
   padding: 0;
-  transform: translateY(-50%);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1;
   color: var(--color-text-secondary);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: none;
+  border: 0;
   cursor: pointer;
-  transition: color 0.15s ease-out, border-color 0.15s ease-out, transform 0.15s ease-out, opacity 0.15s ease-out;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out;
 }
-.cs-doc-snav.is-prev { left: 16px; }
-.cs-doc-snav.is-next { right: 16px; }
-.cs-doc-snav svg { width: 20px; height: 20px; flex: none; }
-.cs-doc-snav:hover:not(:disabled) {
-  color: var(--hero-ink);
-  border-color: var(--color-accent);
-  transform: translateY(calc(-50% - 1px));
+.cs-doc-zoom button:hover:not(:disabled) { color: var(--hero-ink); background-color: var(--color-accent-soft); }
+.cs-doc-zoom button:disabled { opacity: 0.35; cursor: default; }
+.cs-doc-zoom button:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
+.cs-doc-zoom span {
+  min-width: 42px;
+  text-align: center;
+  font-family: var(--font-metric);
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
 }
-.cs-doc-snav:active:not(:disabled) { transform: translateY(calc(-50% + 1px)); }
-.cs-doc-snav:disabled { opacity: 0.35; cursor: default; }
-.cs-doc-snav:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-
-/* 阅读区：固定高度，浅灰底 */
-.cs-doc-stagewrap { flex: none; display: flex; height: 62vh; min-height: 0; }
-
-.cs-doc-rail {
+.cs-doc-fbtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex: none;
-  width: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: var(--color-text-muted);
+  background: none;
+  border: 0;
+  border-radius: 7px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out;
+}
+.cs-doc-fbtn svg { width: 15px; height: 15px; }
+.cs-doc-fbtn:hover { color: var(--color-text); background-color: var(--color-primary-soft); }
+.cs-doc-fbtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+/* 定位反馈条 40px */
+.cs-doc-loc {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 40px;
+  padding: 0 16px;
+  font-size: 13px;
+  color: var(--hero-ink);
+  background-color: var(--color-accent-soft);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-accent) 24%, transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+.cs-doc-loc[hidden] { display: none; }
+.cs-doc-loc.is-on { opacity: 1; }
+.cs-doc-loc-l {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-doc-loc-r {
+  flex: none;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+/* 阅读视口：固定高度 + 内部滚动，浅暖灰底，页边留白 */
+.cs-doc-view {
+  position: relative;
+  flex: none;
+  height: 520px;
+  padding: 24px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background-color: var(--doc-view-bg);
+  scrollbar-width: thin;
+  scroll-behavior: auto;
+}
+.cs-doc-view:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: -2px; }
+.cs-doc-page {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
   overflow: hidden;
   background-color: var(--color-surface);
-  border-right: 1px solid transparent;
-  transition: width 200ms ease-out, border-color 200ms ease-out;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  box-shadow: var(--shadow-sm);
 }
-.cs-doc-rail[hidden] { display: none; }
-.cs-doc-rail.is-on { width: 128px; border-right-color: var(--color-border); }
-.cs-doc-rail-in {
+.cs-doc-page[hidden] { display: none; }
+.cs-doc-page canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background-color: var(--color-surface);
+}
+
+/* 骨架 / 失败 */
+.cs-doc-skel {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  width: 128px;
-  height: 100%;
-  padding: 10px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background-color: var(--doc-view-bg);
 }
-.cs-doc-th {
-  position: relative;
-  flex: none;
-  display: block;
-  width: 96px;
-  height: 136px;
-  padding: 0;
-  overflow: hidden;
+.cs-doc-skel[hidden] { display: none; }
+.cs-doc-skel-pg {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(62%, 420px);
+  padding: 34px 26px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
+  border-radius: 2px;
+  box-shadow: var(--shadow-sm);
+  animation: cs-doc-pulse 1.4s ease-in-out infinite;
+}
+.cs-doc-skel-bar {
+  display: block;
+  height: 9px;
   border-radius: 3px;
-  cursor: pointer;
-  transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
+  background-color: var(--color-primary-soft);
 }
-.cs-doc-th canvas { display: block; width: 100%; height: 100%; object-fit: contain; background-color: var(--color-surface); }
-.cs-doc-th:hover { border-color: var(--color-border-hover); }
-.cs-doc-th.is-on {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 1px var(--color-accent);
-}
-.cs-doc-th:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-
-.cs-doc-stage {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px 64px;
-  overflow: auto;
-  background-color: color-mix(in srgb, var(--color-text) 4%, var(--color-bg));
-}
-.cs-doc-cv {
-  position: relative;
-  flex: none;
-  overflow: hidden;
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  box-shadow: var(--shadow-md);
-}
-.cs-doc-cv canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  opacity: 0;
-  transform: translateX(8px);
-  transition: opacity 120ms ease-out, transform 120ms ease-out;
-}
-.cs-doc-cv[data-dir="-1"] canvas { transform: translateX(-8px); }
-.cs-doc-cv canvas.is-front { opacity: 1; transform: none; }
-.cs-doc-load {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
-}
-.cs-doc-load[hidden] { display: none; }
-
-.cs-doc-foot {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-  font-family: var(--font-metric);
-  font-size: 11px;
+.cs-doc-skel-t {
+  font-size: 12.5px;
   letter-spacing: 0.03em;
-  font-variant-numeric: tabular-nums;
   color: var(--color-text-muted);
-  background-color: var(--color-surface);
-  border-top: 1px solid var(--color-border);
 }
-
-.cs-doc-toast {
+@keyframes cs-doc-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.cs-doc-err {
   position: absolute;
-  left: 50%;
-  top: 88px;
-  z-index: 4;
-  padding: 6px 13px;
-  font-size: 12px;
-  line-height: 1.5;
-  white-space: nowrap;
-  color: var(--color-bg);
-  background-color: color-mix(in srgb, var(--color-text) 88%, transparent);
-  border-radius: var(--radius-full);
-  box-shadow: var(--shadow-md);
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, -6px);
-  transition: opacity 220ms ease-out, transform 220ms ease-out;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  background-color: var(--doc-view-bg);
 }
-.cs-doc-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+.cs-doc-err[hidden] { display: none; }
+.cs-doc-err button {
+  height: 30px;
+  padding: 0 14px;
+  font: inherit;
+  font-size: 12.5px;
+  color: var(--hero-ink);
+  background-color: var(--color-accent-soft);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+.cs-doc-err button:hover { border-color: var(--color-accent); }
 
 /* ---------- 全屏阅读 ---------- */
 .cs-doc-fs {
@@ -2970,35 +3209,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   background-color: var(--color-bg);
 }
 .cs-doc-fs[hidden] { display: none; }
-.cs-doc-fs-top {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: 52px;
-  padding: 0 10px 0 20px;
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
-}
-.cs-doc-fs-title {
-  min-width: 0;
-  font-size: 13.5px;
-  letter-spacing: 0.01em;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.cs-doc-fs-count {
-  flex: none;
-  font-family: var(--font-metric);
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-text-muted);
-}
-.cs-doc-fs-act { display: flex; align-items: center; gap: 2px; margin-left: auto; }
-.cs-doc-fs-main { position: relative; flex: 1; display: flex; min-height: 0; }
+/* 全屏常驻缩略图栏 */
 .cs-doc-fs-rail {
   flex: none;
   width: 118px;
@@ -3040,14 +3251,46 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 .cs-doc-fs-th.is-on { border-color: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent); }
 .cs-doc-fs-th.is-on .cs-doc-fs-thn { color: var(--hero-ink); }
 .cs-doc-fs-th:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-
+.cs-doc-fs-top {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 54px;
+  padding: 0 10px 0 22px;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+.cs-doc-fs-title {
+  min-width: 0;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-doc-fs-meta {
+  flex: none;
+  font-family: var(--font-metric);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.cs-doc-fs-act { display: flex; align-items: center; gap: 8px; margin-left: auto; flex: none; }
+.cs-doc-fs-count {
+  font-family: var(--font-metric);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+.cs-doc-fs-main { position: relative; flex: 1; display: flex; min-height: 0; }
 .cs-doc-fs-stage {
   flex: 1;
   min-width: 0;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 20px;
+  padding: 22px;
   overflow: auto;
   background-color: color-mix(in srgb, var(--color-text) 4%, var(--color-bg));
 }
@@ -3058,11 +3301,19 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   overflow: hidden;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 2px;
   box-shadow: var(--shadow-lg);
 }
-.cs-doc-fs-cv canvas { position: absolute; top: 0; left: 0; display: block; }
-
+.cs-doc-fs-cv canvas { display: block; width: 100%; height: auto; }
+.cs-doc-fs-load {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+}
+.cs-doc-fs-load[hidden] { display: none; }
 .cs-doc-fs-nav {
   position: absolute;
   top: 50%;
@@ -3071,11 +3322,11 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   color: var(--color-text-secondary);
-  background-color: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  background-color: color-mix(in srgb, var(--color-surface) 78%, transparent);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   border: 1px solid var(--color-border);
@@ -3083,19 +3334,18 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   cursor: pointer;
   transition: color 0.15s ease-out, background-color 0.15s ease-out, opacity 0.15s ease-out;
 }
-.cs-doc-fs-nav.is-prev { left: 134px; }
-.cs-doc-fs-nav.is-next { right: 18px; }
+.cs-doc-fs-nav.is-prev { left: 16px; }
+.cs-doc-fs-nav.is-next { right: 16px; }
 .cs-doc-fs-nav svg { width: 18px; height: 18px; }
-.cs-doc-fs-nav:hover:not(:disabled) { color: var(--color-text); background-color: var(--color-surface); }
+.cs-doc-fs-nav:hover:not(:disabled) { color: var(--hero-ink); background-color: var(--color-surface); }
 .cs-doc-fs-nav:disabled { opacity: 0.3; cursor: default; }
 .cs-doc-fs-nav:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
-
 .cs-doc-fs-bar {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 20px;
   height: 52px;
   background-color: var(--color-surface);
   border-top: 1px solid var(--color-border);
@@ -3103,13 +3353,13 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 .cs-doc-fs-jump {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-family: var(--font-metric);
   font-size: 12px;
   color: var(--color-text-muted);
 }
 .cs-doc-fs-input {
-  width: 42px;
+  width: 44px;
   height: 28px;
   padding: 0 4px;
   font: inherit;
@@ -3136,7 +3386,6 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   border: 1px solid var(--color-border);
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.15s ease-out, color 0.15s ease-out;
 }
 .cs-doc-fs-zbtn:hover { background-color: var(--color-primary-soft); color: var(--color-text); }
 .cs-doc-fs-zbtn:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
@@ -3150,68 +3399,97 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cs-doc-reader.is-in { animation: none; }
-  .cs-doc-cv canvas { transition: none; transform: none; }
-  .cs-doc-rail { transition: none; }
+  .cs-doc-ev,
+  .cs-doc-primary svg { transition: none; }
+  .cs-doc-skel-pg { animation: none; }
+  .cs-doc-loc { transition: none; }
+  .cs-doc-exp { animation: none; }
 }
 
+/* 展开入场：220ms 轻量 scaleY（从纸缝里展开的感觉），弱化动效时直接显示 */
+@keyframes cs-doc-open {
+  from { opacity: 0; transform: scaleY(0.985); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+.cs-doc-exp { transform-origin: top center; }
+.cs-doc-exp:not([hidden]) { animation: cs-doc-open 220ms ease-out both; }
+
+/* 900–1200：阅读视口降到 480 */
+@media (max-width: 1200px) {
+  .cs-doc-view { height: 480px; }
+}
+
+/* ≤900：回落正文列宽 + 上下堆叠（左栏在上、阅读器在下） */
 @media (max-width: 900px) {
-  .cs-doc-stagewrap { flex-direction: column-reverse; height: 56vh; }
-  .cs-doc-stage { padding: 20px 56px; }
-  .cs-doc-snav { width: 40px; height: 40px; }
-  .cs-doc-snav.is-prev { left: 12px; }
-  .cs-doc-snav.is-next { right: 12px; }
-  .cs-doc-rail { width: auto; height: 0; border-right: 0; border-top: 1px solid transparent; transition: height 200ms ease-out; }
-  .cs-doc-rail.is-on { width: auto; height: 120px; border-right: 0; border-top-color: var(--color-border); }
-  .cs-doc-rail-in {
-    flex-direction: row;
+  .cs-doc-card.is-open {
     width: 100%;
-    height: 120px;
-    padding: 8px 10px;
-    overflow-x: auto;
-    overflow-y: hidden;
+    margin-left: 0;
   }
-  .cs-doc-th { width: 74px; height: 100px; }
-  .cs-doc-card { padding: 16px; column-gap: 16px; }
-  .cs-doc-fs-rail { width: 104px; padding: 12px 10px; }
-  .cs-doc-fs-th { width: 82px; height: 116px; }
-  .cs-doc-fs-nav.is-prev { left: 122px; }
-  .cs-doc-fs-stage { padding: 14px; }
+  .cs-doc-main { flex-direction: column; }
+  /* 上排：证据锚点横滑带，保持可见；摘要文字收起 */
+  .cs-doc-side {
+    width: 100%;
+    padding: 16px 22px 18px;
+    border-right: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .cs-doc-side-t,
+  .cs-doc-side-p,
+  .cs-doc-hr,
+  .cs-doc-side-row,
+  .cs-doc-side-note { display: none; }
+  .cs-doc-evs {
+    flex-direction: row;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    gap: 10px;
+    padding-bottom: 4px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin;
+  }
+  .cs-doc-ev {
+    flex: none;
+    width: 224px;
+    scroll-snap-align: start;
+    transform: none;
+  }
+  .cs-doc-ev:hover { transform: none; }
+  .cs-doc-ev-d { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cs-doc-side-foot { padding-top: 10px; }
+  .cs-doc-head { padding: 0 22px; }
+  .cs-doc-view { height: 420px; }
 }
 
 @media (max-width: 640px) {
-  .cs-doc-card {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "cover"
-      "body"
-      "reader";
-    row-gap: 14px;
-    padding: 16px;
-  }
-  .cs-doc-stagewrap { height: 52vh; }
-  .cs-doc-stage { padding: 14px 34px; }
-  .cs-doc-snav {
-    width: 36px;
-    height: 36px;
-    background-color: color-mix(in srgb, var(--color-surface) 82%, transparent);
-  }
-  .cs-doc-snav.is-prev { left: 4px; }
-  .cs-doc-snav.is-next { right: 4px; }
-  .cs-doc-snav svg { width: 17px; height: 17px; }
-  .cs-doc-t { padding-right: 0; flex-wrap: wrap; row-gap: 4px; }
+  .cs-doc-sum { padding: 16px; column-gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  .cs-doc-cover { display: none; }
+  .cs-doc-t { padding-right: 0; flex-wrap: wrap; row-gap: 4px; font-size: 16px; }
   .cs-doc-badge { top: 12px; right: 14px; }
   .cs-doc-actions { gap: 10px 14px; }
-  .cs-doc-tbtn-t { display: none; }
-  .cs-doc-cover { display: none; }
-  .cs-doc-rbar { padding: 0 4px; }
-  .cs-doc-rmeta { display: none; }
-  .cs-doc-fs-rail { display: none; }
-  .cs-doc-fs-nav.is-prev { left: 10px; }
-  .cs-doc-fs-nav.is-next { right: 10px; }
-  .cs-doc-fs-nav { width: 38px; height: 38px; }
-  .cs-doc-fs-nav svg { width: 15px; height: 15px; }
+  .cs-doc-head { height: 76px; gap: 12px; padding: 0 16px; }
+  .cs-doc-ic { width: 34px; height: 34px; border-radius: 9px; }
+  .cs-doc-ic svg { width: 16px; height: 16px; }
+  .cs-doc-name { font-size: 15.5px; }
+  .cs-doc-ht-meta { display: none; }
+  .cs-doc-ht-sub { font-size: 11.5px; }
+  .cs-doc-pill { display: none; }
+  .cs-doc-collapse { height: 28px; padding: 0 10px; font-size: 12px; }
+  .cs-doc-side { padding: 14px 16px 16px; }
+  .cs-doc-ev { width: 204px; }
+  .cs-doc-view { height: 420px; padding: 16px; }
+  .cs-doc-tools { padding: 0 10px; }
+  .cs-doc-tools-l { display: none; }
+  .cs-doc-tools-r { gap: 8px; margin-left: auto; }
+  .cs-doc-fit { display: none; }
+  .cs-doc-loc { padding: 0 12px; gap: 8px; }
+  .cs-doc-loc-r { display: none; }
   .cs-doc-fs-top { padding: 0 8px 0 14px; gap: 8px; }
+  .cs-doc-fs-meta { display: none; }
+  .cs-doc-fs-rail { width: 96px; padding: 10px 10px; }
+  .cs-doc-fs-th { width: 72px; height: 102px; }
+  .cs-doc-fs-nav { width: 38px; height: 38px; }
+  .cs-doc-fs-nav.is-prev { left: 8px; }
+  .cs-doc-fs-nav.is-next { right: 8px; }
   .cs-doc-fs-bar { gap: 14px; height: 48px; }
-  .cs-doc-toast { top: 108px; font-size: 11.5px; }
+  .cs-doc-fs-stage { padding: 12px; }
 }
