@@ -2504,8 +2504,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 .cs-doc-sum {
   position: relative;
   display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  column-gap: 20px;
+  grid-template-columns: minmax(0, 1fr);
   padding: 16px 20px;
   cursor: pointer;
 }
@@ -2526,37 +2525,6 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   border-radius: var(--radius-full);
   white-space: nowrap;
   pointer-events: none;
-}
-
-.cs-doc-cover {
-  grid-area: auto;
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 96px;
-  height: 136px;
-  overflow: hidden;
-  color: var(--color-text-muted);
-  background-color: var(--color-primary-soft);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  pointer-events: none;
-}
-.cs-doc-cover svg { width: 24px; height: 24px; }
-.cs-doc-cover-k {
-  font-family: var(--font-metric);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  color: var(--hero-ink);
-}
-.cs-doc-cover-n {
-  font-size: 10.5px;
-  letter-spacing: 0.04em;
-  color: var(--color-text-muted);
 }
 
 .cs-doc-body { position: relative; z-index: 2; min-width: 0; }
@@ -3432,8 +3400,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 }
 
 @media (max-width: 640px) {
-  .cs-doc-sum { padding: 16px; column-gap: 16px; grid-template-columns: minmax(0, 1fr); }
-  .cs-doc-cover { display: none; }
+  .cs-doc-sum { padding: 16px; }
   .cs-doc-t { padding-right: 0; flex-wrap: wrap; row-gap: 4px; font-size: 16px; }
   .cs-doc-badge { top: 12px; right: 14px; }
   .cs-doc-actions { gap: 10px 14px; }
