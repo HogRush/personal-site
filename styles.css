@@ -2496,13 +2496,17 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   margin-left: calc(360px - min(1120px, calc(100vw - 96px)) / 2);
 }
 
+/* 收起态做减法：只留关键信息，限宽 760、左对齐内容列；
+   展开态不受影响（上方 is-open 显式 width 优先于本条 max-width） */
+.cs-doc-card:not(.is-open) { max-width: 760px; }
+
 /* ---------- 紧凑态 ---------- */
 .cs-doc-sum {
   position: relative;
   display: grid;
   grid-template-columns: 96px minmax(0, 1fr);
   column-gap: 20px;
-  padding: 18px 20px;
+  padding: 16px 20px;
   cursor: pointer;
 }
 .cs-doc-sum[hidden] { display: none; }
@@ -2591,55 +2595,22 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   color: var(--color-text-muted);
   white-space: nowrap;
 }
-.cs-doc-sub {
-  margin: 7px 0 0;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-}
 .cs-doc-desc {
   margin: 6px 0 0;
   font-size: 14px;
   line-height: 1.7;
   color: var(--color-text-secondary);
+  display: -webkit-box;          /* 简介限 2 行，防窄屏把卡片撑高 */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
-.cs-doc-anchors {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin: 12px 0 0;
-}
-.cs-doc-anchor {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 28px;
-  padding: 0 11px;
-  font: inherit;
-  font-size: 12px;
-  line-height: 1;
-  white-space: nowrap;
-  color: var(--color-text-secondary);
-  background-color: transparent;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: color 0.15s ease-out, border-color 0.15s ease-out, background-color 0.15s ease-out;
-}
-.cs-doc-anchor svg { width: 10px; height: 10px; flex: none; opacity: 0.7; }
-.cs-doc-anchor:hover {
-  color: var(--hero-ink);
-  background-color: var(--color-accent-soft);
-  border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
-}
-.cs-doc-anchor:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 .cs-doc-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px 16px;
-  margin: 16px 0 0;
+  margin: 12px 0 0;
 }
 .cs-doc-primary {
   display: inline-flex;

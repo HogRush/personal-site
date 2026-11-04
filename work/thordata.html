@@ -247,18 +247,7 @@
                       集群产品内容流程文档
                       <span class="cs-doc-meta">PDF · 12 页</span>
                     </h4>
-                    <p class="cs-doc-sub">内容研究与生产流程规范</p>
                     <p class="cs-doc-desc">涵盖关键词筛选与搜索意图分析、标题规范、内容生产与优化标准，以及内链外链规则。</p>
-                    <div class="cs-doc-anchors">
-                      <button class="cs-doc-anchor" type="button" data-anchor-page="2" data-anchor-label="关键词研究" aria-controls="ev-sop-view">
-                        第2页 · 关键词研究
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
-                      </button>
-                      <button class="cs-doc-anchor" type="button" data-anchor-page="3" data-anchor-label="标题规范" aria-controls="ev-sop-view">
-                        第3页 · 标题规范
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
-                      </button>
-                    </div>
                     <div class="cs-doc-actions">
                       <button class="cs-doc-primary" type="button" id="ev-sop-open" aria-expanded="false" aria-controls="ev-sop-exp">
                         <span id="ev-sop-open-t">查看预览</span>
@@ -1210,7 +1199,8 @@
       var seq = 0, fsSeq = 0, locTimer = 0, pendingLoc = null, lastW = 0;
       var say = window.__csSay || function () {};
 
-      var anchors = Array.prototype.slice.call(card.querySelectorAll('[data-anchor-page]'));
+      /* 锚点入口只剩展开态左栏的证据卡（cs-doc-ev）；收起卡面的页码胶囊已随减法删除 */
+      var anchors = Array.prototype.slice.call(card.querySelectorAll('.cs-doc-ev'));
 
       function clamp(n) { return Math.min(Math.max(Math.round(n) || 1, 1), TOTAL); }
       function dpr() { return Math.min(window.devicePixelRatio || 1, 2.5); }
