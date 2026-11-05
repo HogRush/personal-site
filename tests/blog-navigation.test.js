@@ -7,6 +7,15 @@ const blog = readFileSync(new URL('../blog.html', import.meta.url), 'utf8');
 const articles = [...blog.matchAll(/<link rel="prefetch" href="(\/blog\/[^"#]+)"/g)]
   .map(match => readFileSync(new URL(`..${match[1]}.html`, import.meta.url), 'utf8'));
 
+test('blog list uses the compact header with a native home link', () => {
+  const header = blog.match(/<header class="site-header article-topbar">([\s\S]*?)<\/header>/)?.[1] || '';
+  expect(header).toMatch(/class="article-back" href="\/"/);
+  expect(header.indexOf('class="article-back"')).toBeLessThan(header.indexOf('class="brand"'));
+  expect(header).toContain('id="theme-toggle"');
+  expect(header).toContain('id="nav-toggle"');
+  expect(blog).toContain('<noscript><style>.article-topbar .header-actions { display: none; }</style></noscript>');
+});
+
 test('each article puts the back-to-blog link in its compact header', () => {
   expect(articles.length).toBeGreaterThan(0);
   for (const article of articles) {
