@@ -4,6 +4,20 @@ import { readFileSync, existsSync } from 'node:fs';
 const css = readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 const headers = () => readFileSync(new URL('../_headers', import.meta.url), 'utf8');
 const blog = readFileSync(new URL('../blog.html', import.meta.url), 'utf8');
+const articles = [...blog.matchAll(/<link rel="prefetch" href="(\/blog\/[^"#]+)"/g)]
+  .map(match => readFileSync(new URL(`..${match[1]}.html`, import.meta.url), 'utf8'));
+
+test('each article puts the back-to-blog link in its compact header', () => {
+  expect(articles.length).toBeGreaterThan(0);
+  for (const article of articles) {
+    const header = article.match(/<header class="site-header article-topbar">([\s\S]*?)<\/header>/)?.[1] || '';
+    expect(header).toMatch(/class="article-back" href="\/blog"/);
+    expect(header.indexOf('class="article-back"')).toBeLessThan(header.indexOf('class="brand"'));
+    expect(header).toContain('id="theme-toggle"');
+    expect(header).toContain('id="nav-toggle"');
+    expect((article.match(/class="article-back"/g) || []).length).toBe(1);
+  }
+});
 
 test('published blog articles are prefetched with short-lived browser freshness', () => {
   const articleLinks = [...blog.matchAll(/href="(\/blog\/[^"#]+)"/g)].map(match => match[1]);
