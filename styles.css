@@ -2553,6 +2553,13 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
    展开态不受影响（上方 is-open 显式 width 优先于本条 max-width） */
 .cs-doc-card:not(.is-open) { max-width: 760px; }
 
+/* 静态文档卡（仅下载、不展开）：不给「可点 / 可展开」的视觉暗示。
+   链接用的是 <a>，UA 默认下划线在 flex 容器里仍会透出，故显式去掉；
+   hover 边框回落普通边框色，取消收起态卡片的 accent 描边反馈。 */
+.cs-doc-card.is-static .cs-doc-sum { cursor: default; }
+.cs-doc-card.is-static .cs-doc-primary { text-decoration: none; }
+.cs-doc-card.is-static:hover { border-color: var(--color-border); }
+
 /* ---------- 紧凑态 ---------- */
 .cs-doc-sum {
   position: relative;
