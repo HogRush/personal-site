@@ -1935,6 +1935,17 @@ html.dark .cs-h1-logo--ink { display: none; }
   font-family: var(--font-metric);
   font-variant-numeric: tabular-nums;
 }
+/* 图注第二行小字（如证据 07 的停运说明）：与 cs-range 同级，占满整行 */
+.cs-feature-cap.has-note { flex-wrap: wrap; }
+.cs-feature-cap .cs-feature-note {
+  flex: 1 0 100%;
+  font-size: 12px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  max-width: 96ch;
+  white-space: normal;
+}
 
 /* --- B 证物清单 --- */
 /* 清单行分隔线降透明度减淡：亮 #E7E5E4 → 有效约 #EDEBE9，暗 #292524 → 有效约 #1D1A19（贴近卡面 #1C1917）；
