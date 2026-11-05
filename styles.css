@@ -1068,6 +1068,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   text-wrap: pretty;
 }
 .article-body p:last-child { margin-bottom: 0; }
+/* 首段直接跟在分隔线后时补上上间距；只针对 <p>，不碰老文章开头的 h2 */
+.article-body > p:first-child { margin-top: 32px; }
 
 /* 小节标题：22px / 600 / 行高 1.75 / 上 48 下 16（sitor 实测） */
 .article-body h2 {
@@ -1161,6 +1163,10 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .article-body .article-signoff-line { font-size: 20px; }
   .article-invite { padding: 32px 24px 52px; }
   .article-invite-card { padding: 18px 20px; }
+}
+
+@media (max-width: 640px) {
+  .article-body > p:first-child { margin-top: 24px; }
 }
 
 @media (max-width: 480px) {
