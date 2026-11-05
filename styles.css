@@ -1811,6 +1811,41 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   max-height: 520px;
   object-fit: contain;
 }
+/* 主图组合形态（2026-11-05 证据落位）：
+   is-pair = 两张 3:4 竖版并排成组合横版（严禁竖图单独满宽）；
+   is-stack = 两条宽条上下组成前后对比组 */
+.cs-feature-media.is-pair {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+}
+.cs-feature-media.is-pair .cs-feature-img { width: auto; max-width: calc(50% - 6px); max-height: 520px; }
+.cs-feature-media.is-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 16px 18px;
+}
+.cs-feature-media.is-stack .cs-feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.cs-feature-media.is-stack .cs-feature-item .cs-feature-img { width: 100%; height: auto; max-height: 300px; }
+.cs-feature-item-cap {
+  font-family: var(--font-metric);
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
 .cs-feature-ph {
   display: flex;
   flex-direction: column;
@@ -1878,6 +1913,14 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   color: var(--color-text);
 }
 .cs-feature-cap .cs-todo { font-size: 12px; color: var(--hero-ink); white-space: nowrap; opacity: 0.9; }
+.cs-feature-cap .cs-range {
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  font-family: var(--font-metric);
+  font-variant-numeric: tabular-nums;
+}
 
 /* --- B 证物清单 --- */
 /* 清单行分隔线降透明度减淡：亮 #E7E5E4 → 有效约 #EDEBE9，暗 #292524 → 有效约 #1D1A19（贴近卡面 #1C1917）；
@@ -2272,6 +2315,12 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   overflow: hidden;
 }
 .cs-lb-frame.has-img { aspect-ratio: auto; }
+/* 多图证据（组合主图）：竖版并排 / 宽条上下，均不裁切 */
+.cs-lb-frame.is-multi { aspect-ratio: auto; display: flex; overflow: auto; }
+.cs-lb-frame.is-row { flex-direction: row; align-items: center; justify-content: center; gap: 10px; padding: 10px; }
+.cs-lb-frame.is-col { flex-direction: column; align-items: center; gap: 10px; padding: 10px; }
+.cs-lb-frame.is-row .cs-lb-img { width: auto; max-width: 100%; max-height: 72vh; }
+.cs-lb-frame.is-col .cs-lb-img { width: auto; max-width: 100%; max-height: 62vh; }
 .cs-lb-img {
   display: block;
   width: 100%;
