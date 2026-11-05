@@ -3,6 +3,14 @@ import { readFileSync, existsSync } from 'node:fs';
 
 const css = readFileSync(new URL('../styles.css', import.meta.url), 'utf8');
 const headers = () => readFileSync(new URL('../_headers', import.meta.url), 'utf8');
+const blog = readFileSync(new URL('../blog.html', import.meta.url), 'utf8');
+
+test('published blog articles are prefetched with short-lived browser freshness', () => {
+  const articleLinks = [...blog.matchAll(/href="(\/blog\/[^"#]+)"/g)].map(match => match[1]);
+  const prefetched = [...blog.matchAll(/<link rel="prefetch" href="(\/blog\/[^"#]+)"/g)].map(match => match[1]);
+  expect([...new Set(prefetched)].sort()).toEqual([...new Set(articleLinks)].sort());
+  expect(headers()).toMatch(/\/blog\/\*\s+Cache-Control:\s*public,\s*max-age=60/);
+});
 
 test('blog entry is animated without waiting for scroll observers', () => {
   expect(css).toMatch(/@keyframes blog-enter/);

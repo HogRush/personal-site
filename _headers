@@ -1,3 +1,6 @@
+/blog/*
+  Cache-Control: public, max-age=60
+
 /styles.css
   Cache-Control: public, max-age=60
 
