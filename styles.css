@@ -23,6 +23,8 @@
   /* 首屏 H1 专用墨色：与 sitor #E0B88A 同色相(H32)/同饱和(S58%)，仅压明度到 35%，
      对纸底 #f5f5f0 对比度 5.15:1（sitor 原色在纸底仅 1.69:1，不可读） */
   --hero-ink: #8d5d25;
+  /* 描边按钮 hover 墨色：亮色压深一档（#6f4a1e），暗色提到 --color-accent-hover */
+  --hero-ink-hover: #6f4a1e;
   /* 阅读区底色：浅色用暖灰 #F2F0EC，暗色在 html.dark 里给等价层次 */
   --doc-view-bg: #f2f0ec;
 
@@ -72,6 +74,7 @@ html.dark {
   --color-accent-soft: #2a2118;
   /* 深色下直接用 sitor 实测强调色，对 #0c0a09 对比度 10.72:1 */
   --hero-ink: #e0b88a;
+  --hero-ink-hover: #ecd2ac;
   --doc-view-bg: #171412;
 
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
@@ -2577,9 +2580,13 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: 8px 12px;
   margin: 12px 0 0;
 }
+/* 收起态操作区 = 方案 C 双描边按钮对（2026-11-05 业主拍板）：
+   「查看预览」accent 描边 + accent 文字（--hero-ink，两主题对卡面对比度 ≥ 4.5:1），
+   「下载 PDF」中性描边（--color-border）+ 次要文字色；均透明底、hover 低透明度微填充。
+   统一 36px 高 / 胶囊圆角 / 14px·500 / tabular-nums / 14px 内联 SVG 图标。 */
 .cs-doc-primary {
   display: inline-flex;
   align-items: center;
@@ -2587,28 +2594,53 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   height: 36px;
   padding: 0 16px;
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--color-accent-foreground);
-  background-color: var(--color-accent);
-  border: 1px solid var(--color-accent);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--hero-ink);
+  background-color: transparent;
+  border: 1px solid var(--hero-ink);
   border-radius: var(--radius-full);
   cursor: pointer;
-  transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
+  transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out, transform 0.12s ease-out;
 }
-.cs-doc-primary svg { width: 13px; height: 13px; transition: transform 0.18s ease-out; }
+.cs-doc-primary svg { width: 14px; height: 14px; transition: transform 0.18s ease-out; }
 .cs-doc-primary[aria-expanded="true"] svg { transform: rotate(180deg); }
-.cs-doc-primary:hover { background-color: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+.cs-doc-primary:hover {
+  color: var(--hero-ink-hover);
+  background-color: color-mix(in srgb, var(--hero-ink) 12%, transparent);
+  border-color: var(--hero-ink-hover);
+}
+.cs-doc-primary:active { transform: translateY(1px); }
 .cs-doc-primary:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 .cs-doc-dl {
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
   color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
   text-decoration: none;
-  border-bottom: 1px solid var(--color-border-hover);
-  padding-bottom: 1px;
-  transition: color 0.15s ease-out, border-bottom-color 0.15s ease-out;
+  cursor: pointer;
+  transition: background-color 0.15s ease-out, border-color 0.15s ease-out, color 0.15s ease-out, transform 0.12s ease-out;
 }
-.cs-doc-dl:hover { color: var(--color-text); border-bottom-color: currentColor; }
+.cs-doc-dl svg { width: 14px; height: 14px; }
+.cs-doc-dl:hover {
+  color: var(--color-text);
+  background-color: var(--color-primary-soft);
+  border-color: var(--color-border-hover);
+}
+.cs-doc-dl:active { transform: translateY(1px); }
 .cs-doc-dl:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
 
 /* ---------- 展开态 ---------- */
