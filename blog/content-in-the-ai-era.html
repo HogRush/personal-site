@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 时代来了，内容还重要吗？ · HogRush</title>
+  <meta name="description" content="当人人都能用 AI 写出一篇像模像样的文章，内容这件事，还有多少价值？关于内容生产、门槛上移与读者消失的一点思考。" />
+  <meta name="theme-color" content="#f5f5f0" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content="AI 时代来了，内容还重要吗？" />
+  <meta property="og:description" content="当人人都能用 AI 写出一篇像模像样的文章，内容这件事，还有多少价值？" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-11-05" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="canonical" href="https://hogrush.pages.dev/blog/content-in-the-ai-era" />
+  <link rel="icon" href="/favicon.ico?v=20261028b" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261028b" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261028b" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261028b" />
+  <link rel="manifest" href="/site.webmanifest?v=20261028b" />
+  <script>
+    /* 防止主题闪烁：首屏渲染前应用偏好（light / dark / system） */
+    (function () {
+      var pref = 'system';
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark' || saved === 'system') pref = saved;
+      } catch (e) {}
+      var dark = pref === 'dark' ||
+        (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var root = document.documentElement;
+      if (dark) root.classList.add('dark');
+      root.setAttribute('data-theme', pref);
+      /* 标记 JS 可用：滚动入场动效仅在 JS 可用时隐藏元素（无 JS 时内容完整可见） */
+      root.classList.add('js');
+      /* 刷新（reload）时浏览器会恢复滚动位置：先按终态渲染，
+         避免恢复到的位置先空白、再淡入 */
+      var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var isReload = navEntry ? navEntry.type === 'reload'
+        : !!(performance.navigation && performance.navigation.type === 1);
+      if (isReload) root.classList.add('is-reload');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body id="top" data-no-paper>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="paper-texture" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="HogRush · 返回首页">
+        <img class="brand-mark" src="/assets/hogrush-logo.png"
+             srcset="/assets/hogrush-logo.png 1x, /assets/hogrush-logo@2x.png 2x"
+             alt="" width="32" height="32" decoding="async" />
+        <span class="brand-name">HogRush</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a class="nav-link" href="/#about">关于</a>
+        <a class="nav-link" href="/#projects">项目</a>
+        <a class="nav-link" href="/blog" aria-current="page">博客</a>
+        <a class="nav-link" href="/#contact">联系</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-primary header-cta" href="/#contact">来信</a>
+        <button class="icon-btn theme-toggle" id="theme-toggle" type="button" data-mode="system" aria-label="当前：跟随系统，点击切换为浅色" title="当前：跟随系统，点击切换为浅色">
+          <svg class="icon-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
+        </button>
+        <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <svg class="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="article-page">
+    <article class="article" aria-labelledby="article-title">
+      <div class="article-shell">
+        <!-- 返回博客：样式对标 sitor 的「Back to blog」 -->
+        <a class="article-back" href="/blog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
+          <span>返回博客</span>
+        </a>
+
+        <!-- 元信息：分类 → 日期 → 阅读时长 -->
+        <div class="article-meta reveal">
+          <span class="blog-tag blog-tag--essay">随笔</span>
+          <time datetime="2026-11-05">2026 年 11 月 5 日</time>
+          <span class="article-time">5 分钟阅读</span>
+        </div>
+
+        <h1 class="article-title reveal" id="article-title">AI 时代来了，内容还重要吗？</h1>
+
+        <p class="article-deck reveal">当人人都能用 AI 写出一篇像模像样的文章，内容这件事，还有多少价值？</p>
+
+        <hr class="article-rule" />
+
+        <div class="article-body">
+
+          <p>以前做内容运营，选题、查资料、搭框架、写稿、修改，一篇文章折腾半天是常事。</p>
+          <p>现在呢？给大模型一段 Prompt，十几秒就能生成一篇结构完整、逻辑通顺的文章。再配合 Agent Workflow，连选题分析、SEO 优化、多平台分发都能自动化。</p>
+          <p>更可怕的是，很多时候它写得并不差。</p>
+          <p>当表达能力不再稀缺，那些靠表达吃饭的人，究竟还剩下什么？</p>
+
+          <section id="production" aria-labelledby="h-production">
+            <h2 id="h-production">内容的生产门槛，确实快没了</h2>
+
+            <p>必须承认，AIGC 已经把内容生产这件事彻底工业化了。</p>
+            <p>过去一个团队一天产出几篇内容，现在一个人调度几个 Agent，就能完成从需求抓取、关键词获取、结构制定到文案生成的整条流水线。</p>
+            <p>这不是简单的效率提升，而是供给关系发生了变化。</p>
+            <p>以前我们担心没有内容可发，现在真正的问题是，内容多到根本没人看。</p>
+            <p>打开任何一个平台，标题越来越精准，封面越来越精致，观点越来越完整。但刷完之后，总觉得什么都没留下。</p>
+            <p>因为大部分内容只是在重新排列人们早就知道的东西。</p>
+            <p>我逐渐意识到，AI 降低的是内容的表达成本，却没有降低获得真实认知的成本。</p>
+            <p>会写，不代表有东西值得写。</p>
+
+          </section>
+
+          <section id="threshold" aria-labelledby="h-threshold">
+            <h2 id="h-threshold">内容真正的门槛，正在向上迁移</h2>
+
+            <p>以前衡量一个内容运营，往往看产出数量、阅读量、CTR、完播率。</p>
+            <p>这些指标当然重要，但它们很容易让人产生一种错觉：数据好，就代表内容有价值。</p>
+            <p>一个精心设计的标题可以带来点击，一套成熟的叙事模板可以提高完播率，AI 甚至能批量完成。</p>
+            <p>可用户看完之后呢？</p>
+            <p>他有没有真正解决问题？有没有改变原来的判断？下次遇到类似的问题，还会不会想到你？</p>
+            <p>我觉得这些问题比单纯的流量更值得关心。</p>
+            <p>大模型很擅长总结已经存在的知识，但真实世界里那些尚未被总结的细节，仍然需要有人亲自去发现。</p>
+            <p>一次用户访谈里不经意的抱怨，一个产品上线后反常的转化数据，一次自己踩过的坑，都可能比几十篇整理得漂漂亮亮的行业文章更有价值。</p>
+            <p>内容的门槛没有消失，只是从“怎么写”，变成了“你到底知道什么”。</p>
+
+          </section>
+
+          <section id="readers" aria-labelledby="h-readers">
+            <h2 id="h-readers">比内容过剩更值得警惕的，是读者正在消失</h2>
+
+            <p>还有一个变化，我觉得很多做内容的人没有真正准备好。</p>
+            <p>过去我们研究 SEO，是为了让用户搜索一个问题，然后点击进入我们的页面。</p>
+            <p>但随着 AI Search、RAG 和各类 Answer Engine 的发展，用户越来越可能直接在对话框里拿到答案。</p>
+            <p>以往人们搜索好吃的餐厅，需要打开百度打开Google，耗费二三十分钟在数十个网页里搜索信息，还要避免被广告影响判断，现在直接向AI提问，两分钟他就能产出一个完整的、带有餐饮详细信息的推荐清单。</p>
+            <p>尽管内容依然参与了信息流动，却现阶段不一定能换来一次访问。</p>
+            <p>行业开始讨论 GEO，试图让内容更容易被 AI 检索和引用。</p>
+            <p>这当然值得研究，但我总觉得哪里不对。</p>
+            <p>我们好像还在用上一代的流量思维，解决下一代的问题。</p>
+            <p>真正危险的不是 AI 不给你流量，而是用户已经不需要记住你是谁。</p>
+            <p>一篇标准化教程可以被提炼成几句话，一个普通的知识总结可以被模型即时重组。</p>
+            <p>如果你的内容只提供这些，用户确实没有多少理由专门来找你。</p>
+            <p>接下来的竞争，可能不再只是争夺用户的注意力，而是争夺用户愿意长期交付给谁的信任。</p>
+            <p>流量是平台暂时借给你的，信任才是自己一点点攒下来的。</p>
+
+          </section>
+
+          <section id="believe" aria-labelledby="h-believe">
+            <h2 id="h-believe">我依然相信内容，但不想制造内容垃圾</h2>
+
+            <p>实际上我完全不排斥 AI，甚至觉得内容运营应该比其他岗位更积极的拥抱它。</p>
+            <p>让 AI 整理资料、分析搜索意图、辅助选题、处理重复工作，没有什么不好。</p>
+            <p>但我不想把思考本身也一并外包。</p>
+            <p>如果一篇文章的观点来自 AI，案例来自 AI，结论也是 AI 给出的，那我作为创作者的存在，还有什么意义？</p>
+            <p>这不是要刻意追求所谓的纯人工创作。</p>
+            <p>而是我希望每次发布之前，都能认真问自己：这篇东西有没有我真实的观察？有没有我愿意负责的判断？如果有人提出反对意见，我能不能解释自己为什么这么想？</p>
+            <p>我在虎扑发的一篇赛评，尽管这篇文章有大量语句结构和错别字问题，但字里行间充斥着我对比赛强烈的个人观点和情感输出，评论区引发了球迷朋友们的共鸣，最终这篇文章超过了10w阅读，我的初衷其实就是想做出一篇能打动别人的内容，流量不过是平台的赠予，是计划之外的部分。</p>
+            <p>在我实习期的第一个公司，当时的直接主管是位资深编辑，此前在报业传媒集团工作过，非常老式的墨客，他送给我一句话至今我仍奉为圭臬：作者要为自己产出的内容负责，如果打算写水文、制造垃圾，可以考虑换行了</p>
+            <p>所以我越来越觉得，未来会有两种内容。</p>
+            <p>一种是用来获取答案的，看完就走，随时可以被更便宜的生成结果替代。</p>
+            <p>另一种是让人愿意持续关注的。它可能不够完美，甚至偶尔会出错，但你能从中感受到一个人长期积累的经验、偏好和思考。</p>
+            <p>后者很难规模化，也没有那么容易被 KPI 衡量。</p>
+            <p>但我想做的是后者。</p>
+            <p>AI 时代，内容当然重要。只是生产内容这件事，正在变得不那么重要。</p>
+            <p>真正稀缺的，是有人愿意认真观察这个世界，把自己看到的、想明白的东西讲出来，并且对这些话负责。</p>
+            <p>如果有一天，我写的文章只是为了填满更新日程，那不如不写。</p>
+            <p>因为我希望别人记住的，不是我发了多少篇文章。</p>
+            <p>而是某个时刻，他确实从我这里得到了一点别处没有的东西。</p>
+
+          </section>
+
+          <!-- 尾句 -->
+          <div class="article-signoff">
+            <p class="article-signoff-line">保持好奇，把想法做出来。</p>
+            <p class="article-signoff-end">欢迎来到 HogRush。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 文末卡片（对标 sitor 的 invite card 位置） -->
+      <aside class="article-invite" aria-label="来信">
+        <div class="article-invite-card">
+          <p class="article-invite-text">有想法，随时来信。</p>
+          <a class="btn btn-primary" href="/#contact">写封邮件</a>
+        </div>
+      </aside>
+    </article>
+  </main>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="brand" href="/" aria-label="HogRush · 返回首页">
+        <span class="brand-name">HogRush</span>
+      </a>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="/#about">关于</a>
+        <a href="/#projects">项目</a>
+        <a href="/blog">博客</a>
+        <a href="/#contact">联系</a>
+      </nav>
+      <div class="footer-social">
+        <a class="icon-btn" href="https://github.com/HogRush" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+        </a>
+        <a class="icon-btn" href="mailto:kdsc2974@gmail.com" aria-label="邮箱">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+        </a>
+        <a class="icon-btn" href="https://x.com/your-handle" target="_blank" rel="noopener" aria-label="X（Twitter）">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
+        </a>
+      </div>
+    </div>
+    <p class="footer-bottom">© <span id="year">2026</span> HogRush · 保持好奇，把想法做出来</p>
+  </footer>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>
