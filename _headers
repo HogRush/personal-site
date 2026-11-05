@@ -1,0 +1,5 @@
+/styles.css
+  Cache-Control: public, max-age=60
+
+/script.js
+  Cache-Control: public, max-age=60
