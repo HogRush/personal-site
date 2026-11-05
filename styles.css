@@ -1421,6 +1421,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .cs-h1 {
   display: block;
+  /* 官方图形标记的高度锚点：'Thordata' 在本字号下的大写高实测 = 0.7046em（1440: 40.87 / 390: 28.58） */
+  --cs-h1-cap: 0.7046;
   font-family: var(--font-metric);
   font-style: normal;
   font-weight: 400;
@@ -1429,6 +1431,18 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   letter-spacing: -0.02em;
   margin-bottom: 16px;
 }
+/* Thordata 官方 logo 的图形标记（mark），高度与 H1 大写高一致，底边坐基线 */
+.cs-h1-logo {
+  display: inline-block;
+  width: auto;
+  height: calc(var(--cs-h1-cap) * 1em);
+  margin-right: clamp(8px, 0.21em, 12px);
+  vertical-align: baseline;
+}
+/* 亮主题：官方绿 #19D8AA 对纸底只有 1.68:1，换同色相加深版 #0E775E（5.03:1） */
+.cs-h1-logo--official { display: none; }
+html.dark .cs-h1-logo--official { display: inline-block; }
+html.dark .cs-h1-logo--ink { display: none; }
 .cs-attrs {
   font-family: var(--cs-serif);
   font-size: 17px;
