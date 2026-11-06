@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>独立项目 · HogRush</title>
+  <meta name="description" content="HogRush 的独立项目：记录从想法到作品的探索。" />
+  <meta name="theme-color" content="#f5f5f0" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0c0a09" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content="独立项目 · HogRush" />
+  <meta property="og:description" content="记录从想法到作品的探索。" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <link rel="icon" href="/favicon.ico?v=20261028b" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261028b" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261028b" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20261028b" />
+  <link rel="manifest" href="/site.webmanifest?v=20261028b" />
+  <script>
+    /* 防止主题闪烁：首屏渲染前应用偏好（light / dark / system） */
+    (function () {
+      var pref = 'system';
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark' || saved === 'system') pref = saved;
+      } catch (e) {}
+      var dark = pref === 'dark' ||
+        (pref === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      var root = document.documentElement;
+      if (dark) root.classList.add('dark');
+      root.setAttribute('data-theme', pref);
+      /* 标记 JS 可用：滚动入场动效仅在 JS 可用时隐藏元素（无 JS 时内容完整可见） */
+      root.classList.add('js');
+      /* 刷新（reload）时浏览器会恢复滚动位置：先按终态渲染，
+         避免恢复到的位置先空白、再淡入 */
+      var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var isReload = navEntry ? navEntry.type === 'reload'
+        : !!(performance.navigation && performance.navigation.type === 1);
+      if (isReload) root.classList.add('is-reload');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/project.css" />
+</head>
+<body id="top" data-no-paper>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div class="paper-texture" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="HogRush · 返回首页">
+        <img class="brand-mark" src="assets/hogrush-logo.png"
+             srcset="assets/hogrush-logo.png 1x, assets/hogrush-logo@2x.png 2x"
+             alt="" width="32" height="32" decoding="async" />
+        <span class="brand-name">HogRush</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
+        <a class="nav-link" href="/#about">关于</a>
+        <a class="nav-link" href="/#projects">项目</a>
+        <a class="nav-link" href="/blog">博客</a>
+        <a class="nav-link" href="/#contact">联系</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-primary header-cta" href="/#contact">来信</a>
+        <button class="icon-btn theme-toggle" id="theme-toggle" type="button" data-mode="system" aria-label="当前：跟随系统，点击切换为浅色" title="当前：跟随系统，点击切换为浅色">
+          <svg class="icon-monitor" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z" /></svg>
+        </button>
+        <button class="icon-btn nav-toggle" id="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav">
+          <svg class="icon-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+          <svg class="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" /></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="independent-page">
+    <section class="ip-head">
+      <p class="ip-kicker">项目</p>
+      <h1>独立项目</h1>
+      <p>把自己的想法一步步变成作品，记录从发现问题、独立设计到开发打磨的过程。<br>不一定是很大的产品，但希望每个小工具都能解决一点真实的问题。</p>
+    </section>
+    <div class="ip-list">
+      <article class="ip-card ip-feature">
+        <div class="ip-content">
+          <p class="ip-index">01</p>
+          <h2>输入框翻译</h2>
+          <p class="ip-subtitle">一个让短文本翻译更顺手的小工具（内容示例）</p>
+          <p class="ip-meta">角色：待确认 <span>·</span> 类型：效率工具 <span>·</span> 状态：演示页面</p>
+          <div class="ip-facts">
+            <section><h3>起点</h3><p>经常需要翻译简短文本，不想一次次复制、打开新页面，再切换回来。</p></section>
+            <section><h3>作品示意</h3><p>探索让输入、翻译和复制更直接的交互方式。当前内容为页面演示，不代表已上线产品。</p></section>
+          </div>
+          <div class="ip-tags"><span>文本处理</span><span>交互体验</span><span>轻量工具</span></div>
+          <div class="ip-bottom"><a href="#demo">体验示例 ↗</a><span>NO. 001 · MINI TOOL</span></div>
+        </div>
+        <figure class="ip-preview"><figcaption>Product preview</figcaption><picture><source srcset="/assets/img/projects/input-translation-still.png" media="(prefers-reduced-motion: reduce)"><img src="/assets/img/projects/input-translation.gif" width="553" height="309" alt="输入框翻译产品示意：浏览器搜索框与翻译图标的动态演示"></picture></figure>
+      </article>
+      <article class="ip-card ip-compact">
+        <p class="ip-index">02</p><div><h2>项目名称待填</h2><p class="ip-subtitle">这里留给下一个真正做过的小工具，不需要为了填满作品集而虚构项目。</p><p class="ip-meta">角色待填 <span>·</span> 类型待填 <span>·</span> 时间待填</p><div class="ip-tags"><span>占位标签</span><span>占位标签</span></div></div><div class="ip-placeholder" aria-hidden="true"><div class="ip-paper"><i></i><i></i><i></i><i></i></div></div>
+      </article>
+      <article class="ip-card ip-compact">
+        <p class="ip-index">03</p><div><h2>更多项目待补充</h2><p class="ip-subtitle">保持统一的项目卡片结构。之后新增作品，只需要替换内容和产品预览。</p><p class="ip-meta">角色待填 <span>·</span> 类型待填 <span>·</span> 时间待填</p><div class="ip-tags"><span>占位标签</span><span>占位标签</span></div></div><div class="ip-placeholder ip-plus" aria-hidden="true">+</div>
+      </article>
+    </div>
+    <section class="ip-demo" id="demo" aria-labelledby="demo-title">
+      <div class="ip-demo-heading"><p class="ip-index">01</p><h2 id="demo-title">交互示例</h2><p>仅用于展示交互，支持下方三组内置短句，未接入真实翻译服务。</p></div>
+      <div class="ip-widget" data-translator>
+        <div class="ip-toolbar"><span>输入框翻译</span><span>离线交互示例</span></div>
+        <div class="ip-widget-body">
+          <div class="ip-langs"><span data-from>EN · English</span><button type="button" data-swap aria-label="切换翻译方向">⇄</button><span data-to>中文 · Chinese</span></div>
+          <div class="ip-fields"><label>输入内容<textarea data-input maxlength="180" rows="4" spellcheck="false">Hello, world!</textarea><small data-count>13 / 180</small></label><div class="ip-output"><span>翻译结果</span><p data-output role="status" aria-live="polite">你好，世界！</p><button type="button" data-copy>复制结果</button></div></div>
+          <div class="ip-controls"><span>仅支持下方的示例短句</span><button type="button" data-translate>翻译一下 ↗</button></div>
+          <div class="ip-examples"><span>试一试</span><button type="button" data-example="0">Hello, world!</button><button type="button" data-example="1">Keep it simple.</button><button type="button" data-example="2">Make something useful.</button></div>
+          <p class="ip-feedback" data-feedback role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+    <section class="ip-end"><div><h2>有个小想法，正在慢慢做。</h2><p>欢迎交流产品、技术，或者生活里那些值得解决的小问题。</p></div><a class="btn btn-primary" href="mailto:kdsc2974@gmail.com">给我写信 ↗</a></section>
+  </main>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <a class="brand" href="/" aria-label="HogRush · 返回首页">
+        <span class="brand-name">HogRush</span>
+      </a>
+      <nav class="footer-nav" aria-label="页脚导航">
+        <a href="/#about">关于</a>
+        <a href="/#projects">项目</a>
+        <a href="/blog">博客</a>
+        <a href="/#contact">联系</a>
+      </nav>
+      <div class="footer-social">
+        <a class="icon-btn" href="https://github.com/HogRush" target="_blank" rel="noopener" aria-label="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" /><path d="M9 18c-4.51 2-5-2-7-2" /></svg>
+        </a>
+        <a class="icon-btn" href="mailto:kdsc2974@gmail.com" aria-label="邮箱">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
+        </a>
+      </div>
+    </div>
+    <p class="footer-bottom">© <span id="year">2026</span> HogRush · 保持好奇，把想法做出来</p>
+  </footer>
+
+  <script src="/script.js" defer></script>
+  <script src="/project.js" defer></script>
+</body>
+</html>
