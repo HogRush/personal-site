@@ -1877,6 +1877,13 @@ html.dark .cs-h1-logo--ink { display: none; }
 }
 .cs-evset-h span { font-family: var(--font-metric); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
 
+/* 展会稿件按同稿组整理，保留原文标题与各媒体链接。 */
+.cs-exhibition-links { margin-top: 36px; }
+.cs-exhibition-note { margin: 0 0 24px; color: var(--color-text-muted); font-size: 13px; line-height: 1.7; }
+.cs-exhibition-group + .cs-exhibition-group { margin-top: 28px; }
+.cs-exhibition-group h4 { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+.cs-exhibition-title { margin: 0 0 14px; color: var(--color-text-secondary); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+
 /* --- A 主图 --- */
 .cs-feature {
   margin: 0 0 18px;
