@@ -6,3 +6,8 @@
 
 /script.js
   Cache-Control: public, max-age=60
+
+/assets/downloads/spacebar-quick-translator-v0.1.3-quality-fast.zip
+  Content-Type: application/zip
+  Content-Disposition: attachment; filename="spacebar-quick-translator-v0.1.3-quality-fast.zip"
+  Cache-Control: public, max-age=3600
