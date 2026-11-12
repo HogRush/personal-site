@@ -3606,3 +3606,120 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   .cs-doc-fs-bar { gap: 14px; height: 48px; }
   .cs-doc-fs-stage { padding: 12px; }
 }
+
+/* ============================================================
+   代码块（cs-code-*）：robots.txt 原文 / JSON-LD 实例
+   与 .cs-feature / .cs-table-card 同一套边框与圆角；
+   颜色只用主题 token，深浅两态由 html.dark 接管。
+   长行只在 .cs-code-body 内部横向滚动，不撑破页面。
+   ============================================================ */
+.cs-code-card {
+  margin: 16px 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  overflow: hidden;
+}
+.cs-code-card:first-of-type { margin-top: 0; }
+.cs-code-card:last-child { margin-bottom: 0; }
+
+.cs-code-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 18px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  border-bottom: 1px solid var(--color-border);
+}
+.cs-code-t {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12.5px;
+  color: var(--color-text);
+}
+.cs-code-lang {
+  font-family: var(--font-metric);
+  font-size: 9.5px;
+  line-height: 1.6;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hero-ink);
+  border: 1px solid color-mix(in srgb, var(--hero-ink) 34%, var(--color-border));
+  border-radius: 3px;
+  padding: 0 4px;
+  white-space: nowrap;
+}
+.cs-code-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.cs-code-path {
+  font-family: var(--font-metric);
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+a.cs-code-path { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, var(--color-border-hover) 80%, transparent); }
+a.cs-code-path:hover { color: var(--color-text); text-decoration-color: currentColor; }
+.cs-code-src {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: -4px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  transition: color 0.15s ease-out, background-color 0.15s ease-out;
+}
+.cs-code-src svg { width: 13px; height: 13px; }
+.cs-code-src:hover { color: var(--color-text); background-color: color-mix(in srgb, var(--color-surface) 60%, var(--color-bg)); }
+.cs-code-src:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 1px; }
+
+.cs-code-body {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background-color: color-mix(in srgb, var(--color-surface) 55%, var(--color-bg));
+}
+.cs-code-body pre {
+  margin: 0;
+  padding: 16px 18px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--color-text-secondary);
+  tab-size: 2;
+}
+.cs-code-body code {
+  font: inherit;
+  color: inherit;
+  background: none;
+  white-space: pre;
+}
+
+.cs-code-note {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 640px) {
+  .cs-code-head { padding: 9px 14px; gap: 10px; }
+  .cs-code-t { font-size: 12px; gap: 6px; }
+  .cs-code-path { font-size: 10.5px; }
+  .cs-code-body pre { padding: 14px; font-size: 11.5px; }
+  .cs-code-note { margin-top: 8px; }
+}
