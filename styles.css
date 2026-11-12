@@ -1491,10 +1491,6 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   font-size: 12.5px;
   letter-spacing: 0.06em;
   color: var(--color-text-secondary);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-full);
-  padding: 5px 13px;
   margin-bottom: 26px;
 }
 .cs-eyebrow .cs-dot {
@@ -1795,13 +1791,6 @@ html.dark .cs-h1-logo--ink { display: none; }
   margin-top: 3px;
 }
 .cs-role-table .cs-hl { color: var(--color-text); font-weight: 600; }
-.cs-role-note {
-  margin-top: 16px;
-  font-size: 12.5px;
-  line-height: 1.7;
-  color: var(--color-text-muted);
-  max-width: var(--cs-text);
-}
 
 /* ---------- 做法 ---------- */
 .cs-step { padding-top: clamp(40px, 4.6vw, 54px); }
@@ -1830,26 +1819,6 @@ html.dark .cs-h1-logo--ink { display: none; }
 .cs-step-body { max-width: var(--cs-text); margin-left: 46px; }
 .cs-step-body p { font-size: 15.5px; line-height: 1.8; color: var(--color-text-secondary); }
 .cs-step-body p + p { margin-top: 10px; }
-.cs-step-body .cs-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
-.cs-chip {
-  font-size: 11.5px;
-  letter-spacing: 0.02em;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  background-color: var(--color-surface);
-  border-radius: var(--radius-full);
-  padding: 3px 10px;
-  white-space: nowrap;
-}
-.cs-chip b {
-  font-family: var(--font-metric);
-  font-style: normal;
-  font-weight: 500;
-  color: var(--hero-ink);
-  font-size: 12.5px;
-  font-variant-numeric: tabular-nums;
-}
-.cs-chip .cs-chip-note { color: var(--color-text-muted); }
 
 /* ---------- 证据系统：主图 / 证物清单 / 内联表格 ----------
    每个板块自带一组证据（.cs-evset）。三种组件共用一套边框与字号：
@@ -2559,7 +2528,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   .cs-attrs .cs-attrs-dash { display: none; }
   .cs-attrs .cs-attrs-tier { display: block; margin-top: 3px; }
   .cs-hero-sub { font-size: 15.5px; }
-  .cs-eyebrow { font-size: 11.5px; padding: 4px 11px; margin-bottom: 20px; }
+  .cs-eyebrow { font-size: 11.5px; margin-bottom: 20px; }
   .cs-sec { font-size: 23px; }
   .cs-role-table,
   .cs-role-table tbody,
