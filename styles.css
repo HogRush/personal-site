@@ -2627,12 +2627,12 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 .cs-doc-card.is-open { border-color: color-mix(in srgb, var(--color-accent) 20%, var(--color-border)); }
 .cs-doc-card.is-open { box-shadow: var(--shadow-md); }
 
-/* 展开后横向撑到 1120（窄屏留 96 边距），并居中于视口：
+/* 展开后横向撑到 980（窄屏留 96 边距），并居中于视口：
    li 左缘到视口中心的水平距离恒为 360px = 860(wrap)/2 − 24(step padding) − 46(evset margin)，
    在 wrap 以 860 上限居中的所有宽度下精确成立；<900 由媒体查询接管 */
 .cs-doc-card.is-open {
-  width: min(1120px, calc(100vw - 96px));
-  margin-left: calc(360px - min(1120px, calc(100vw - 96px)) / 2);
+  width: min(980px, calc(100vw - 96px));
+  margin-left: calc(360px - min(980px, calc(100vw - 96px)) / 2);
 }
 
 /* 收起态做减法：只留关键信息，限宽 760、左对齐内容列；
@@ -2892,12 +2892,12 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 /* 双栏主体 */
 .cs-doc-main { display: flex; align-items: stretch; min-width: 0; }
 
-/* 左栏：固定 300px */
+/* 左栏：固定 272px */
 .cs-doc-side {
   flex: none;
   display: flex;
   flex-direction: column;
-  width: 300px;
+  width: 272px;
   padding: 24px 24px 28px;
   border-right: 1px solid var(--color-border);
 }
@@ -3231,7 +3231,7 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 .cs-doc-view {
   position: relative;
   flex: none;
-  height: 520px;
+  height: 470px;
   padding: 24px;
   overflow: auto;
   overscroll-behavior: contain;
@@ -3543,9 +3543,9 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 .cs-doc-exp { transform-origin: top center; }
 .cs-doc-exp:not([hidden]) { animation: cs-doc-open 220ms ease-out both; }
 
-/* 900–1200：阅读视口降到 480 */
+/* 900–1200：阅读视口降到 445 */
 @media (max-width: 1200px) {
-  .cs-doc-view { height: 480px; }
+  .cs-doc-view { height: 445px; }
 }
 
 /* ≤900：回落正文列宽 + 上下堆叠（左栏在上、阅读器在下） */
