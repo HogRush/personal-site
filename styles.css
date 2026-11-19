@@ -3251,7 +3251,8 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   box-shadow: var(--shadow-sm);
 }
 .cs-doc-page[hidden] { display: none; }
-.cs-doc-page canvas {
+.cs-doc-page canvas,
+.cs-doc-page img {
   display: block;
   width: 100%;
   height: auto;
@@ -3360,7 +3361,8 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   cursor: pointer;
   transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out;
 }
-.cs-doc-fs-th canvas { display: block; width: 100%; height: 100%; object-fit: contain; }
+.cs-doc-fs-th canvas,
+.cs-doc-fs-th img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .cs-doc-fs-thn {
   position: absolute;
   right: 3px;
@@ -3430,7 +3432,8 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
   border-radius: 2px;
   box-shadow: var(--shadow-lg);
 }
-.cs-doc-fs-cv canvas { display: block; width: 100%; height: auto; }
+.cs-doc-fs-cv canvas,
+.cs-doc-fs-cv img { display: block; width: 100%; height: auto; }
 .cs-doc-fs-load {
   position: absolute;
   left: 50%;
