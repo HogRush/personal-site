@@ -2892,12 +2892,12 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 /* 双栏主体 */
 .cs-doc-main { display: flex; align-items: stretch; min-width: 0; }
 
-/* 左栏：固定 272px */
+/* 左栏：固定 280px */
 .cs-doc-side {
   flex: none;
   display: flex;
   flex-direction: column;
-  width: 272px;
+  width: 280px;
   padding: 24px 24px 28px;
   border-right: 1px solid var(--color-border);
 }
