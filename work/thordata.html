@@ -43,7 +43,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../styles.css?v=20261122" />
 </head>
 <body id="top" data-no-paper>
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -1180,7 +1180,7 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
     </section>
 
     <!-- ============ 文档全屏阅读（沿用当前页码） ============ -->
-    <div class="cs-doc-fs" id="cs-doc-fs-sop" data-doc-fs data-for="ev-sop-card" role="dialog" aria-modal="true" aria-labelledby="cs-doc-fs-sop-title" tabindex="-1" hidden>
+    <dialog class="cs-doc-fs" id="cs-doc-fs-sop" data-doc-fs data-for="ev-sop-card" aria-labelledby="cs-doc-fs-sop-title" closedby="any">
       <div class="cs-doc-fs-top">
         <span class="cs-doc-fs-title" id="cs-doc-fs-sop-title">集群产品内容流程文档</span>
         <span class="cs-doc-fs-meta">文档 · 12 页</span>
@@ -1211,9 +1211,9 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
           <button class="cs-doc-fs-zbtn" type="button" data-role="fsZi" aria-label="放大">+</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
-    <div class="cs-doc-fs" id="cs-doc-fs-blog" data-doc-fs data-for="ev-blog-card" role="dialog" aria-modal="true" aria-labelledby="cs-doc-fs-blog-title" tabindex="-1" hidden>
+    <dialog class="cs-doc-fs" id="cs-doc-fs-blog" data-doc-fs data-for="ev-blog-card" aria-labelledby="cs-doc-fs-blog-title" closedby="any">
       <div class="cs-doc-fs-top">
         <span class="cs-doc-fs-title" id="cs-doc-fs-blog-title">Thordata Blog 内容标准</span>
         <span class="cs-doc-fs-meta">文档 · 6 页</span>
@@ -1244,11 +1244,11 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
           <button class="cs-doc-fs-zbtn" type="button" data-role="fsZi" aria-label="放大">+</button>
         </div>
       </div>
-    </div>
+    </dialog>
 
 
     <!-- ============ 证据 Lightbox（放在 .cs-page 内以继承案例页的字体变量） ============ -->
-    <div class="cs-lb" id="cs-lb" role="dialog" aria-modal="true" aria-labelledby="cs-lb-title" hidden>
+    <dialog class="cs-lb" id="cs-lb" aria-labelledby="cs-lb-title" closedby="any">
       <div class="cs-lb-inner">
         <div class="cs-lb-bar">
           <span class="cs-lb-title" id="cs-lb-title">证据预览</span>
@@ -1266,7 +1266,7 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
         </div>
         <p class="cs-lb-cap" id="cs-lb-cap"></p>
       </div>
-    </div>
+    </dialog>
 
     <div class="cs-toast" id="cs-toast" role="status" aria-live="polite"></div>
   </main>
@@ -1312,7 +1312,6 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
       var phSub = document.getElementById('cs-lb-ph-sub');
       var closeBtn = document.getElementById('cs-lb-close');
       var toast = document.getElementById('cs-toast');
-      var lastFocus = null;
       var tTimer;
 
       function say(msg) {
@@ -1329,7 +1328,9 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
          支持单图与组合主图（is-pair 竖版并排 / is-stack 宽条上下），均不裁切。 */
       function show(o) {
         o = o || {};
-        lastFocus = document.activeElement;
+        /* 先把焦点交给触发元素：原生 dialog 关闭时会把焦点还给 showModal 前的
+           activeElement；macOS 上鼠标点按钮并不聚焦，这里补一次，保证焦点回位 */
+        if (o.invoker && o.invoker.focus) o.invoker.focus({ preventScroll: true });
         titleEl.textContent = o.title || '证据预览';
         capEl.innerHTML = o.cap || '';
         Array.prototype.forEach.call(lbFrame.querySelectorAll('img.cs-lb-img'), function (im) { im.remove(); });
@@ -1351,17 +1352,13 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
           phTitle.textContent = o.phTitle || '截图待插入';
           phSub.textContent = o.phSub || '原图比例 · 建议宽度 1600px 以上';
         }
-        lb.hidden = false;
-        lb.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
-        closeBtn.focus();
+        /* 原生 dialog：顶层渲染、焦点陷阱、Esc 关闭、关闭后焦点回到触发元素
+           全部交给浏览器，不再手写 lastFocus / keydown / body 锁滚 */
+        lb.showModal();
       }
 
       function close() {
-        lb.classList.remove('is-open');
-        lb.hidden = true;
-        document.body.style.overflow = '';
-        if (lastFocus && lastFocus.focus) lastFocus.focus();
+        lb.close();
       }
 
       /* A. 主图：有图按原图放大（组合主图多张一起展示），没图弹占位提示层 */
@@ -1376,6 +1373,7 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
           var capHTML = cap ? cap.innerHTML : '';
           if (range) capHTML += '　·　' + range.innerHTML;
           show({
+            invoker: btn,
             title: cap ? cap.textContent : '证据预览',
             cap: capHTML,
             imgs: imgs.map(function (im) { return { src: im.currentSrc || im.src, alt: im.alt }; }),
@@ -1397,6 +1395,7 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
           if (kind === 'image') {
             var src = a.getAttribute('data-img');
             show({
+              invoker: a,
               title: label,
               cap: '<b>' + label + '</b>' + (meta ? '　·　' + meta.textContent : ''),
               imgs: src ? [{ src: src, alt: label }] : [],
@@ -1437,13 +1436,16 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
       });
 
       closeBtn.addEventListener('click', close);
-      lb.addEventListener('click', function (e) {
-        if (e.target === lb) close();
-      });
-      document.addEventListener('keydown', function (e) {
-        if (!lb.classList.contains('is-open')) return;
-        if (e.key === 'Escape') close();
-      });
+      /* closedby="any" 负责点击遮罩与 Esc；Safari 暂不支持 closedby，
+         只在不支持时挂一层兜底，判断指针确实落在 dialog 外才关闭 */
+      if (!('closedBy' in HTMLDialogElement.prototype)) {
+        lb.addEventListener('click', function (e) {
+          if (e.target !== lb) return;
+          var r = lb.getBoundingClientRect();
+          if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) return;
+          close();
+        });
+      }
     })();
 
   </script>
@@ -1770,27 +1772,37 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
           img.src = src;
         }
 
+        var fsSilent = false;
+
+        /* toast 在 dialog 外会被 top layer 挡住（z-index 无效）：
+           全屏期间把提示节点挂进当前 dialog，关闭时放回 main */
+        function mountToast(dlg) {
+          var t = document.getElementById('cs-toast');
+          if (t && dlg) dlg.appendChild(t);
+        }
+        function unmountToast() {
+          var t = document.getElementById('cs-toast');
+          var page = document.querySelector('main.cs-page');
+          if (t && page) page.appendChild(t);
+        }
+
         function openFs() {
           if (!fs) return;
           if (!state.open) openPanel(state.current);
           state.fsOpen = true;
-          fs.el.hidden = false;
-          document.body.style.overflow = 'hidden';
+          if (els.full) els.full.focus({ preventScroll: true });  /* 同上：保证关闭后焦点回到全屏按钮 */
+          fs.el.showModal();       /* 原生：顶层 + 焦点陷阱 + Esc，焦点落在首个可聚焦控件 */
+          mountToast(fs.el);
           buildFsRail();
           syncChrome();
           fsRender();
-          fs.el.focus({ preventScroll: true });
         }
 
         function closeFs(silent) {
           if (!state.fsOpen) return;
+          fsSilent = !!silent;
           state.fsOpen = false;
-          fs.el.hidden = true;
-          document.body.style.overflow = '';
-          if (!silent) {
-            if (els.full) els.full.focus({ preventScroll: true });
-            renderPage();
-          }
+          fs.el.close();
         }
 
         /* ---------- 事件 ---------- */
@@ -1834,6 +1846,16 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
         });
 
         if (fs) {
+          /* Esc / 遮罩关闭也走 close 事件：同步状态并恢复焦点与内联页 */
+          fs.el.addEventListener('close', function () {
+            var silent = fsSilent;
+            fsSilent = false;
+            state.fsOpen = false;
+            unmountToast();
+            if (silent) { if (els.openBtn) els.openBtn.focus({ preventScroll: true }); return; }
+            if (els.full) els.full.focus({ preventScroll: true });
+            renderPage();
+          });
           if (fs.exit) fs.exit.addEventListener('click', function () { closeFs(false); });
           if (fs.prev) fs.prev.addEventListener('click', function () { go(state.current - 1); });
           if (fs.next) fs.next.addEventListener('click', function () { go(state.current + 1); });
@@ -1863,7 +1885,6 @@ Sitemap: https://www.thordata.com/sitemap.xml</code></pre></div>
 
         document.addEventListener('keydown', function (e) {
           if (state.fsOpen) {
-            if (e.key === 'Escape') { e.preventDefault(); closeFs(false); return; }
             if (fs && fs.input && e.target === fs.input) {
               if (e.key === 'Enter') {
                 e.preventDefault();

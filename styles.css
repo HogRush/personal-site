@@ -10,7 +10,7 @@
   --color-surface: #ffffff;          /* 卡片 */
   --color-text: #1c1917;             /* 主文字 */
   --color-text-secondary: #57534e;   /* 次级文字 */
-  --color-text-muted: #a8a29e;       /* 弱化文字 */
+  --color-text-muted: #6f6862;       /* 弱化文字（纸底 5.01:1 / 白卡 5.48:1） */
   --color-border: #e7e5e4;
   --color-border-hover: #d6d3d1;
   --color-primary: #44403c;
@@ -62,7 +62,7 @@ html.dark {
   --color-surface: #1c1917;
   --color-text: #f5f5f4;
   --color-text-secondary: #a8a29e;
-  --color-text-muted: #78716c;
+  --color-text-muted: #a8a29e;       /* 暗色弱化文字（#1c1917 面 6.93:1） */
   --color-border: #292524;
   --color-border-hover: #44403c;
   --color-primary: #d6d3d1;
@@ -2347,22 +2347,33 @@ html.dark .cs-h1-logo--ink { display: none; }
   color: var(--color-text);
 }
 
-/* ---------- Lightbox ---------- */
+/* ---------- 原生 dialog 浮层（共享） ---------- */
+/* 顶层渲染、焦点陷阱、Esc 关闭、关闭后焦点回到触发元素均由浏览器负责。
+   不锁 body 滚动：showModal() 已让页面 inert，滚动用 overscroll 阻断，
+   避免移除根滚动条造成的横向位移。 */
+dialog:modal { overscroll-behavior: contain; }
+dialog::backdrop { overflow: hidden; overscroll-behavior: contain; }
+
+/* ---------- Lightbox（dialog 本体即面板，遮罩交给 ::backdrop） ---------- */
 .cs-lb {
+  --lb-pad: clamp(16px, 4vw, 48px);
   position: fixed;
-  inset: 0;
-  z-index: 120;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(16px, 4vw, 48px);
-  background-color: color-mix(in srgb, var(--color-text) 76%, transparent);
+  width: min(1080px, calc(100% - var(--lb-pad) * 2));
+  max-width: none;
+  max-height: calc(100dvh - var(--lb-pad) * 2);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  overflow: visible;
 }
-html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, transparent); }
-.cs-lb.is-open { display: flex; }
+.cs-lb[open] { display: flex; }
+.cs-lb::backdrop { background-color: color-mix(in srgb, var(--color-text) 76%, transparent); }
+html.dark .cs-lb::backdrop { background-color: color-mix(in srgb, var(--color-bg) 90%, transparent); }
 .cs-lb-inner {
-  width: min(1080px, 100%);
-  max-height: 100%;
+  width: 100%;
+  max-height: calc(100dvh - var(--lb-pad) * 2);
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -3326,16 +3337,24 @@ html.dark .cs-lb { background-color: color-mix(in srgb, var(--color-bg) 90%, tra
 }
 .cs-doc-err button:hover { border-color: var(--color-accent); }
 
-/* ---------- 全屏阅读 ---------- */
+/* ---------- 全屏阅读（原生 dialog：顶层 + 焦点陷阱 + Esc） ---------- */
 .cs-doc-fs {
   position: fixed;
   inset: 0;
-  z-index: 140;
-  display: flex;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
   flex-direction: column;
+  overflow: hidden;
   background-color: var(--color-bg);
+  color: var(--color-text);
 }
-.cs-doc-fs[hidden] { display: none; }
+.cs-doc-fs[open] { display: flex; }
+.cs-doc-fs::backdrop { background-color: var(--color-bg); }
 /* 全屏常驻缩略图栏 */
 .cs-doc-fs-rail {
   flex: none;
