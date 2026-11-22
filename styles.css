@@ -3,6 +3,25 @@
    暖纸极简 + 编辑部衬线斜体风格（参考 sitor.cc）
    ============================================================ */
 
+/* ---------- 自托管中文衬线子集 ----------
+   只含站点现有衬线标题用到的 197 个汉字 + ASCII + 常用标点（见 assets/fonts/），
+   取代 Google Fonts 的完整 Noto Serif SC（按 unicode-range 分片下载，字形仍是 Noto）。
+   font-display:swap：子集未到时先用 Songti 显示，不阻塞首屏。 */
+@font-face {
+  font-family: "Noto Serif SC Subset";
+  src: url("/assets/fonts/noto-serif-sc-serif-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Noto Serif SC Subset";
+  src: url("/assets/fonts/noto-serif-sc-serif-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- 设计变量（浅色） ---------- */
 :root {
   --color-bg: #f5f5f0;               /* 暖纸底 */
@@ -25,12 +44,16 @@
   --hero-ink: #8d5d25;
   /* 描边按钮 hover 墨色：亮色压深一档（#6f4a1e），暗色提到 --color-accent-hover */
   --hero-ink-hover: #6f4a1e;
+  /* 焦点环：--color-accent 作描边仅 2.04:1，达不到 WCAG 3:1，
+     改用与 hero-ink 同值的墨色（纸底 5.15:1 / 暗色 10.72:1） */
+  --color-focus: #8d5d25;
   /* 阅读区底色：浅色用暖灰 #F2F0EC，暗色在 html.dark 里给等价层次 */
   --doc-view-bg: #f2f0ec;
 
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --font-serif: "Playfair Display", Georgia, "Noto Serif SC", "Songti SC", SimSun, serif;
+  /* 拉丁仍走 Playfair/Georgia；中文优先自托管子集，缺字再回退系统宋体 */
+  --font-serif: "Playfair Display", Georgia, "Noto Serif SC Subset", "Songti SC", SimSun, serif;
 
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -75,6 +98,7 @@ html.dark {
   /* 深色下直接用 sitor 实测强调色，对 #0c0a09 对比度 10.72:1 */
   --hero-ink: #e0b88a;
   --hero-ink-hover: #ecd2ac;
+  --color-focus: #e0b88a;
   --doc-view-bg: #171412;
 
   --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.3);
@@ -110,7 +134,7 @@ body {
 ::selection { background: var(--color-accent); color: var(--color-accent-foreground); }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -531,8 +555,9 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   font-style: italic;
   font-size: 18px;
   line-height: 1;
-  color: var(--color-accent);
-  opacity: 0.85;
+  /* 原 #d4a574 + .85 透明度在纸底只有 2.23:1；墨色不透明度直接 5.15:1 */
+  color: var(--hero-ink);
+  opacity: 1;
   margin: 0 0 14px;
 }
 .card-title {
@@ -882,7 +907,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .blog-card--live .blog-card-link:focus-visible { outline: none; }
 .blog-card--live:has(.blog-card-link:focus-visible) {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -1320,7 +1345,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .work-card-link:focus-visible { outline: none; }
 .work-card:has(.work-card-link:focus-visible) {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
 
@@ -1444,9 +1469,21 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 }
 .card--live .card-link:focus-visible { outline: none; }
 .card--live:has(.card-link:focus-visible) {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 3px;
 }
+
+/* 首页占位卡（03 实验探索 / 04 知识藏馆）：详情未上线，
+   照 /work 的写法 aria-disabled——去掉 hover 抬升与 pointer 光标 */
+.card:has(.card-link[aria-disabled="true"]) { cursor: default; }
+.card:has(.card-link[aria-disabled="true"]):hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border);
+}
+.card > .card-link[aria-disabled="true"] { cursor: default; color: var(--color-text-muted); }
+.card > .card-link[aria-disabled="true"]:hover { color: var(--color-text-muted); }
+.card > .card-link[aria-disabled="true"]:hover svg { transform: none; }
 
 
 /* ============================================================

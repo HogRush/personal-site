@@ -1,13 +1,49 @@
+# ---------------------------------------------------------------------------
+# 全站安全头
+# 说明：
+# - Cloudflare Pages 默认已注入 Referrer-Policy 与 X-Content-Type-Options，
+#   这里显式声明，避免依赖平台默认值。
+# - CSP 里的 'unsafe-inline' 是必需的：每个页面 <head> 都有防主题闪烁的内联
+#   脚本，页面内也有内联 style；去掉会导致暗色闪烁甚至首屏白屏。
+# - 站内没有第三方脚本 / iframe；视频走同源 /assets（media-src 未单独声明，回落到 default-src 'self'）；
+#   第三方来源只有 Google Fonts 的 Inter / Playfair（中文衬线已自托管子集）。
+# ---------------------------------------------------------------------------
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+  Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'
+
 /blog/*
   Cache-Control: public, max-age=60
 
+# 前置条件：styles.css / script.js 的文件名不带版本号，只能给 60 秒浏览器缓存，
+# 过期后必须回源校验。若要把它们改成更长的 max-age 或 immutable，
+# 必须先在各个 HTML 的引用上加 ?v=YYYYMMDD 版本参数（包括 404.html）。
 /styles.css
   Cache-Control: public, max-age=60
 
 /script.js
   Cache-Control: public, max-age=60
 
+/project.css
+  Cache-Control: public, max-age=60
+
+# 前置条件：/assets/* 的一年强缓存依赖「文件名即版本」。
+# 如果原地替换同名文件（例如更新案例截图、文档页图），
+# 浏览器最长一年不会重新请求；替换前必须改文件名，或给该文件单独列一条更短的
+# Cache-Control 并用 ! 先摘掉本规则写入的值。
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# zip 保持 1 小时缓存。/assets/* 已先写入 Cache-Control，
+# 这里必须先 ! 摘掉再设，否则两条会以逗号拼成互相冲突的 max-age
+# （RFC 9111 下缓存会取第一个值，等于一年强缓存）。
+# 摘掉后本条最终输出与改动前一致：public, max-age=3600。
 /assets/downloads/spacebar-quick-translator-v0.1.3-quality-fast.zip
+  ! Cache-Control
+  Cache-Control: public, max-age=3600
   Content-Type: application/zip
   Content-Disposition: attachment; filename="spacebar-quick-translator-v0.1.3-quality-fast.zip"
-  Cache-Control: public, max-age=3600

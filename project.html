@@ -10,7 +10,15 @@
   <meta property="og:title" content="独立项目 · HogRush" />
   <meta property="og:description" content="记录从想法到作品的探索。" />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://hogrush.pages.dev/assets/og-image-1200x630.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="HogRush · 做点有意思的事" />
+  <meta property="og:url" content="https://hogrush.pages.dev/project" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://hogrush.pages.dev/assets/og-image-1200x630.png" />
+  <link rel="canonical" href="https://hogrush.pages.dev/project" />
   <link rel="icon" href="/favicon.ico?v=20261028b" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261028b" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261028b" />
@@ -41,9 +49,9 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/project.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=20261122" />
+  <link rel="stylesheet" href="/project.css?v=20261122" />
 </head>
 <body id="top" data-no-paper>
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -52,8 +60,9 @@
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="/" aria-label="HogRush · 返回首页">
-        <img class="brand-mark" src="assets/hogrush-logo.png"
-             srcset="assets/hogrush-logo.png 1x, assets/hogrush-logo@2x.png 2x"
+        <img class="brand-mark" src="/assets/hogrush-logo-116.webp"
+             srcset="/assets/hogrush-logo-116.webp 116w, /assets/hogrush-logo-232.webp 232w"
+             sizes="32px"
              alt="" width="32" height="32" decoding="async" />
         <span class="brand-name">HogRush</span>
       </a>
@@ -99,7 +108,7 @@
           </div>
           <div class="ip-actions"><div class="ip-tags"><span>文本处理</span><span>交互体验</span><span>轻量工具</span></div><a class="ip-download btn btn-primary" href="/assets/downloads/spacebar-quick-translator-v0.1.3-quality-fast.zip" download="spacebar-quick-translator-v0.1.3-quality-fast.zip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>下载插件 <span>ZIP · v0.1.3</span></a></div>
         </div>
-        <figure class="ip-preview"><picture><source srcset="/assets/img/projects/spacebar-quick-translator.png" media="(prefers-reduced-motion: reduce)"><img src="/assets/img/projects/spacebar-quick-translator.gif" width="508" height="337" alt="Google 搜索页面顶部的浏览器界面插画"></picture></figure>
+        <figure class="ip-preview"><video class="ip-video" autoplay loop muted playsinline preload="none" poster="/assets/img/projects/spacebar-quick-translator.png" width="508" height="338" aria-label="按三下空格直接翻译当前网页的演示"><source src="/assets/img/projects/spacebar-quick-translator.mp4" type="video/mp4" /></video></figure>
       </article>
       <article class="ip-card ip-compact">
         <p class="ip-index">02</p><div><h2>项目名称待填</h2><p class="ip-subtitle">这里留给下一个真正做过的小工具，不需要为了填满作品集而虚构项目。</p><p class="ip-meta">角色待填 <span>·</span> 类型待填 <span>·</span> 时间待填</p><div class="ip-tags"><span>占位标签</span><span>占位标签</span></div></div><div class="ip-placeholder" aria-hidden="true"><div class="ip-paper"><i></i><i></i><i></i><i></i></div></div>
@@ -136,6 +145,6 @@
     <p class="footer-bottom">© <span id="year">2026</span> HogRush · 保持好奇，把想法做出来</p>
   </footer>
 
-  <script src="/script.js" defer></script>
+  <script src="/script.js?v=20261122" defer></script>
 </body>
 </html>

@@ -10,7 +10,15 @@
   <meta property="og:title" content="博客 · HogRush" />
   <meta property="og:description" content="关于产品、写作与创作过程的记录，偶尔也有工具和日常。" />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://hogrush.pages.dev/assets/og-image-1200x630.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="HogRush · 做点有意思的事" />
+  <meta property="og:url" content="https://hogrush.pages.dev/blog" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://hogrush.pages.dev/assets/og-image-1200x630.png" />
+  <link rel="canonical" href="https://hogrush.pages.dev/blog" />
   <link rel="icon" href="/favicon.ico?v=20261028b" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261028b" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261028b" />
@@ -41,8 +49,10 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="preload" href="/assets/fonts/noto-serif-sc-serif-400.woff2"
+        as="font" type="font/woff2" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20261122" />
   <!-- 同源文章预取；导航仍由浏览器接管，停用 JS 也可正常访问。 -->
   <link rel="prefetch" href="/blog/why-i-created-hogrush" />
   <link rel="prefetch" href="/blog/i-dont-prove-myself-by-difficulty" />
@@ -61,8 +71,9 @@
         <span>返回首页</span>
       </a>
       <a class="brand" href="/" aria-label="HogRush · 返回首页">
-        <img class="brand-mark" src="assets/hogrush-logo.png"
-             srcset="assets/hogrush-logo.png 1x, assets/hogrush-logo@2x.png 2x"
+        <img class="brand-mark" src="/assets/hogrush-logo-116.webp"
+             srcset="/assets/hogrush-logo-116.webp 116w, /assets/hogrush-logo-232.webp 232w"
+             sizes="32px"
              alt="" width="32" height="32" decoding="async" />
         <span class="brand-name">HogRush</span>
       </a>
@@ -221,6 +232,6 @@
     <p class="footer-bottom">© <span id="year">2026</span> HogRush · 保持好奇，把想法做出来</p>
   </footer>
 
-  <script src="script.js" defer></script>
+  <script src="script.js?v=20261122" defer></script>
 </body>
 </html>

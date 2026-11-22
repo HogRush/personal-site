@@ -10,7 +10,15 @@
   <meta property="og:title" content="HogRush · 个人主页" />
   <meta property="og:description" content="关于我、我做的项目，以及如何联系我。" />
   <meta property="og:type" content="website" />
-  <meta name="twitter:card" content="summary" />
+  <meta property="og:image" content="https://hogrush.pages.dev/assets/og-image-1200x630.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="HogRush · 做点有意思的事" />
+  <meta property="og:url" content="https://hogrush.pages.dev/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://hogrush.pages.dev/assets/og-image-1200x630.png" />
+  <link rel="canonical" href="https://hogrush.pages.dev/" />
   <link rel="icon" href="/favicon.ico?v=20261028b" sizes="any" />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20261028b" />
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20261028b" />
@@ -41,8 +49,10 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="preload" href="/assets/fonts/noto-serif-sc-serif-400.woff2"
+        as="font" type="font/woff2" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=20261122" />
 </head>
 <body id="top">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -51,8 +61,9 @@
   <header class="site-header">
     <div class="header-inner">
       <a class="brand" href="#top" aria-label="HogRush · 返回顶部">
-        <img class="brand-mark" src="assets/hogrush-logo.png"
-             srcset="assets/hogrush-logo.png 1x, assets/hogrush-logo@2x.png 2x"
+        <img class="brand-mark" src="/assets/hogrush-logo-116.webp"
+             srcset="/assets/hogrush-logo-116.webp 116w, /assets/hogrush-logo-232.webp 232w"
+             sizes="32px"
              alt="" width="32" height="32" decoding="async" />
         <span class="brand-name">HogRush</span>
       </a>
@@ -83,7 +94,10 @@
     <!-- ============ Hero ============ -->
     <section class="hero">
       <div class="hero-inner">
-        <img src="/assets/hogrush-logo.png" srcset="/assets/hogrush-logo@2x.png 2x" alt="HogRush logo" width="96" height="96" class="hero-logo" />
+        <img class="hero-logo" src="/assets/hogrush-logo-232.webp"
+             srcset="/assets/hogrush-logo-116.webp 116w, /assets/hogrush-logo-232.webp 232w, /assets/hogrush-logo-464.webp 464w"
+             sizes="(max-width: 480px) 70px, 116px"
+             width="116" height="116" alt="HogRush logo" decoding="async" fetchpriority="high" />
         <h1 class="hero-title reveal"><span class="hero-title-lead">做点</span><span class="hero-title-accent">有意思的事</span></h1>
         <p class="hero-sub reveal">我是 HogRush，一个正在把想法变成产品的人，<br class="hero-br" />在这里记录我的作品、笔记、创作过程等正在探索的一切。</p>
         <div class="hero-traits reveal">
@@ -163,7 +177,7 @@
               <span class="tag">占位标签</span>
               <span class="tag">占位标签</span>
             </div>
-            <a class="card-link" href="#">
+            <a class="card-link" href="#" aria-disabled="true" title="案例详情稍后上线">
               查看详情
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
             </a>
@@ -177,7 +191,7 @@
               <span class="tag">占位标签</span>
               <span class="tag">占位标签</span>
             </div>
-            <a class="card-link" href="#">
+            <a class="card-link" href="#" aria-disabled="true" title="案例详情稍后上线">
               查看详情
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" /></svg>
             </a>
@@ -232,6 +246,6 @@
     <p class="footer-bottom">© <span id="year">2026</span> HogRush · 保持好奇，把想法做出来</p>
   </footer>
 
-  <script src="script.js" defer></script>
+  <script src="script.js?v=20261122" defer></script>
 </body>
 </html>

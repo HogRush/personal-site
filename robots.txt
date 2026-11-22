@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /assets/downloads/
+
+Sitemap: https://hogrush.pages.dev/sitemap.xml
