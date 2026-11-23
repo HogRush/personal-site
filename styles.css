@@ -1283,8 +1283,8 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 /* ============================================================
    工作项目页（/work）
    全部沿用既有变量与组件：.blog-hero 页首尺度、.blog-list 的 720/20 节奏、
-   .card-index / .card-title / .card-tags / .tag / .card-link 的卡片语言，
-   以及 .article-invite 的来信块。没有新增任何颜色。
+   .card-index / .card-title / .card-tags / .tag / .card-link 的卡片语言。
+   没有新增任何颜色。
    ============================================================ */
 .work-page { min-height: calc(100vh - var(--header-h)); }
 
@@ -1410,15 +1410,13 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   color: var(--color-text);
 }
 
-/* 页尾来信：复用文章页的 invite 卡片，去掉与列表重复的上边距 */
-.work-invite { padding: 20px 24px 72px; }
+/* 2026-11-23：/work 页尾那块来信 CTA 已按要求删除，.work-invite 规则一并移除（.article-invite 仍服务 4 篇文章页） */
 
 @media (max-width: 768px) {
   .work-hero { padding-bottom: 4px; }
   .work-list-section { padding: 24px 24px 32px; }
   .work-card { padding: 24px; }
   .work-card .card-title { font-size: 18px; }
-  .work-invite { padding: 16px 24px 52px; }
 }
 
 @media (max-width: 480px) {
@@ -1428,7 +1426,6 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   /* 窄屏：字段标签折到正文上方 */
   .work-fact { grid-template-columns: 1fr; gap: 4px; }
   .work-fact-label { padding-top: 0; }
-  .work-invite { padding: 12px 16px 48px; }
 }
 
 /* ---------- 首页「工作项目」卡：已上线，整卡可点 ---------- */
