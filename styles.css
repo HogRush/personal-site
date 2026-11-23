@@ -2468,10 +2468,23 @@ html.dark .cs-lb::backdrop { background-color: color-mix(in srgb, var(--color-bg
 
 /* ---------- 响应式 ---------- */
 /* 成果带：① ≥1200 五格一行（base）；② 768–1199 三格 × 2 行；③ ≤767 两列 × 3 行 */
+/* 方案 D（≥768 才生效）：整条收窄到 1000px 并保持居中，列间隙 20px、横向内边距 16px。
+   1000 = 5×184 + 4×20，每格内容宽 152，最长数字 143.81 仍有 8.19px 余量。
+   ≤767 不继承这三项：移动端仍是 条宽 auto / gap 14 / padding-x 16 / 2 列 3 行。 */
+@media (min-width: 768px) {
+  .cs-stats {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    --cs-stat-gap: 20px;
+    --cs-stat-pad-x: 16px;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   .cs-stats {
     --cs-stat-num: clamp(30px, 3.3vw, 40px);
-    --cs-stat-gap: clamp(18px, 2.2vw, 30px);
+    /* 列间隙由上面的 ≥768 规则统一给 20px，这里不再覆盖 */
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
   .cs-stat {
