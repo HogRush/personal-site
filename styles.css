@@ -1349,25 +1349,6 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   outline-offset: 3px;
 }
 
-/* 占位案例：详情页未上线，整卡不可点——不上浮、箭头弱化、cursor 默认 */
-.work-card--soon { cursor: default; }
-.work-card--soon:hover,
-.work-card--soon:focus-within {
-  transform: none;
-  box-shadow: var(--shadow-sm);
-  border-color: var(--color-border);
-}
-.work-card--soon > .card-index,
-.work-card--soon > .card-title,
-.work-card--soon > .work-tagline,
-.work-card--soon > .work-meta,
-.work-card--soon > .work-facts,
-.work-card--soon > .card-tags { cursor: default; }
-.work-card--soon .work-card-link { cursor: default; color: var(--color-text-muted); }
-.work-card--soon .work-card-link:hover { color: var(--color-text-muted); }
-.work-card--soon .work-card-link:hover svg { transform: none; }
-.work-card--soon:has(.work-card-link:focus-visible) { outline: none; }
-
 /* 一句话定位：次级文字，紧接项目名 */
 .work-tagline {
   margin: -2px 0 14px;
