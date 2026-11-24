@@ -1175,6 +1175,17 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 /* 首段直接跟在分隔线后时补上上间距；只针对 <p>，不碰老文章开头的 h2 */
 .article-body > p:first-child { margin-top: 32px; }
 
+/* 正文配图（2026-11-24）：与正文同宽 672，无边框、无阴影，圆角与卡片一致（16）。
+   上下外边距 24 与引文块同一节奏；不加图注——画面自带字幕，再写一行就是重复。 */
+.article-body figure { margin: 24px 0; }
+.article-body figure img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+}
+
 /* 正文引文：左侧 3px 细线 + 略大字号，不用斜体
    （中文没有真斜体，且 font-synthesis 已关）；无底色、无阴影、无圆角。
    竖线取 accent-hover（浅色 #b8906a，纸底 2.58:1），暗色压到 accent 混 border，
