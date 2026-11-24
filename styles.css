@@ -1175,6 +1175,24 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
 /* 首段直接跟在分隔线后时补上上间距；只针对 <p>，不碰老文章开头的 h2 */
 .article-body > p:first-child { margin-top: 32px; }
 
+/* 正文引文：左侧 3px 细线 + 略大字号，不用斜体
+   （中文没有真斜体，且 font-synthesis 已关）；无底色、无阴影、无圆角。
+   竖线取 accent-hover（浅色 #b8906a，纸底 2.58:1），暗色压到 accent 混 border，
+   避免整条线在深底上发白抢视线。 */
+.article-body .article-quote {
+  margin: 24px 0;
+  padding: 0 0 0 20px;
+  border-left: 3px solid var(--color-accent-hover);
+  font-size: 1.05em;
+  line-height: 1.75;
+  font-style: normal;
+  color: var(--color-text);
+  text-wrap: pretty;
+}
+html.dark .article-body .article-quote {
+  border-left-color: color-mix(in srgb, var(--color-accent) 70%, var(--color-border));
+}
+
 /* 小节标题：22px / 600 / 行高 1.75 / 上 48 下 16（sitor 实测） */
 .article-body h2 {
   margin: 48px 0 16px;
@@ -1261,6 +1279,7 @@ html.dark .btn-primary:hover { background-color: var(--color-accent-hover); }
   .article-title { font-size: 26px; margin-bottom: 32px; }
   .article-deck { font-size: 17px; margin-bottom: 32px; }
   .article-body p { font-size: 15px; line-height: 1.75; }
+  .article-body .article-quote { font-size: 15.75px; }
   .article-body h2 { font-size: 20px; margin: 36px 0 12px; }
   .article-body h3 { font-size: 16px; margin: 24px 0 8px; }
   .article-signoff { margin-top: 44px; padding-top: 28px; }
