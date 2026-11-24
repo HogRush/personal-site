@@ -2161,6 +2161,16 @@ html.dark .cs-h1-logo--ink { display: none; }
 .cs-table tbody tr:last-child td { border-bottom: 0; }
 .cs-table td:first-child { color: var(--color-text); font-family: var(--font-metric); font-size: 13.5px; }
 .cs-table tr[hidden] { display: none; }
+/* 关键词表：英文词与线上路径比中文长，允许折行、行高按内容撑开，避免省略号截断路径 */
+.cs-table--kw th { padding: 0 16px; }
+.cs-table--kw td {
+  height: auto;
+  padding: 11px 16px;
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
 .cs-table-more {
   display: flex;
   align-items: center;
